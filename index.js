@@ -14,7 +14,7 @@ var escapeChars = {
   amp: '&'
 };
 
-function FormDataError(field, msg, value) {
+function ConformaError(field, msg, value) {
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
   this.message = msg;
@@ -28,6 +28,9 @@ for(key in escapeChars){ reversedEscapeChars[escapeChars[key]] = key; }
 
 var _filter = {
 
+  /**
+   * @returns {Number}
+   */
   int: function(value) {
     return value|0;
   },
@@ -126,7 +129,7 @@ var _validator = {
   }
 };
 
-var formData = function() {
+var Conforma = function() {
   this._filter = [];
   this._validator = [];
   this._data = {};
@@ -136,20 +139,20 @@ var formData = function() {
 /**
  *
  * @param {object} data
- * @returns {formData}
+ * @returns {Conforma}
  */
-formData.prototype.setData = function(data) {
+Conforma.prototype.setData = function(data) {
   this._data = data || {};
 
   return this;
 };
 
 /**
+ * @param {bool} [clean] - get clean or raw data
  *
- * @param {bool} clean
  * @returns {{}|*}
  */
-formData.prototype.getData = function(clean) {
+Conforma.prototype.getData = function(clean) {
   if(clean) {
     this._runFilter();
   }
@@ -159,9 +162,9 @@ formData.prototype.getData = function(clean) {
 
 /**
  * @param {*} value
- * @returns {formData}
+ * @returns {Conforma}
  */
-formData.prototype.default = function(value) {
+Conforma.prototype.default = function(value) {
   this._data = util._extend(value, this._data);
 
   return this;
@@ -169,9 +172,9 @@ formData.prototype.default = function(value) {
 
 /**
  * @param {*} value
- * @returns {formData}
+ * @returns {Conforma}
  */
-formData.prototype.reflective = function(value) {
+Conforma.prototype.reflective = function(value) {
   this._data = reflective(value, this._data);
 
   return this;
@@ -179,26 +182,26 @@ formData.prototype.reflective = function(value) {
 
 /**
  *
- * @param {string} field
- * @param {*}      filter
- * @param {object} options
- * @returns {formData}
+ * @param {string}           key
+ * @param {*}                filter
+ * @param {object} [options] options
+ * @returns {Conforma}
  */
-formData.prototype.filter = function(field, filter, options) {
-  if(!field) {
+Conforma.prototype.filter = function(key, filter, options) {
+  if(!key) {
     return this;
   }
 
-  if(!this._filter[field]) {
-    this._filter[field] = [];
+  if(!this._filter[key]) {
+    this._filter[key] = [];
   }
 
   if(typeof filter === 'string' && filter !== '') {
-    this._filter[field].push(filter);
+    this._filter[key].push(filter);
   } else if(util.isArray(filter)) {
-    this._filter[field].push.apply(this._filter[field], filter);
+    this._filter[key].push.apply(this._filter[key], filter);
   } else if(typeof filter === 'function') {
-    this._filter[field].push(filter);
+    this._filter[key].push(filter);
   }
 
   return this;
@@ -209,9 +212,9 @@ formData.prototype.filter = function(field, filter, options) {
  * @param {string} field
  * @param {*}      validator
  * @param {object} options
- * @returns {formData}
+ * @returns {Conforma}
  */
-formData.prototype.validate = function(field, validator, options) {
+Conforma.prototype.validate = function(field, validator, options) {
 
   var _self = this;
 
@@ -236,7 +239,7 @@ formData.prototype.validate = function(field, validator, options) {
  * @param key
  * @private
  */
-formData.prototype._applyValidator = function (field, key) {
+Conforma.prototype._applyValidator = function (field, key) {
   var func = null, vName;
 
   if(key === 'required' && !this._required.hasOwnProperty(field)) {
@@ -261,10 +264,10 @@ formData.prototype._applyValidator = function (field, key) {
 };
 
 /**
- * @returns {formData}
+ * @returns {Conforma}
  * @private
  */
-formData.prototype._runFilter = function() {
+Conforma.prototype._runFilter = function() {
   //console.log('BEFORE FILTER: \n', this._data);
   var fieldValue, field;
 
@@ -290,7 +293,7 @@ formData.prototype._runFilter = function() {
  * @param {function} done
  * @returns {Promise}
  */
-formData.prototype.exec = function(done) {
+Conforma.prototype.exec = function(done) {
 
   this._runFilter();
 
@@ -351,8 +354,8 @@ function reflective(needed, obj) {
   return needed;
 }
 
-formData.prototype.FormDataError = FormDataError;
-formData.prototype.reflective = reflective;
+Conforma.ConformaError = ConformaError;
+Conforma.reflective = reflective;
 
 
-module.exports = formData;
+module.exports = Conforma;
