@@ -1,0 +1,34 @@
+{
+  "name": "formata",
+  "version": "0.0.1",
+  "description": "simple form data filter and validator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/xelaz/conforma.git"
+  },
+  "keywords": [
+    "filter",
+    "json",
+    "form",
+    "validate",
+    "sanitize"
+  ],
+  "engines": {
+    "node": "*"
+  },
+  "author": "xelaz",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^2.9.30",
+    "mpath": "^0.2.1",
+    "sanitizer": "^0.1.2",
+    "xregexp": "^2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}

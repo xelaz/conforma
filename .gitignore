@@ -25,3 +25,36 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
+
+
+# Ignore docs files
+_gh_pages
+_site
+.ruby-version
+
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.rej
+*.swop
+*.swp
+*.zip
+*.vi
+*~
+
+# IDE's
+.idea
+.DS_Store
+._*
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
+atlassian-ide-plugin.xml
+config.gypi
