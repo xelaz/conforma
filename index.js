@@ -29,14 +29,32 @@ for(key in escapeChars){ reversedEscapeChars[escapeChars[key]] = key; }
 var _filter = {
 
   /**
+   * @param {*} value
    * @returns {Number}
    */
   int: function(value) {
-    return value|0;
+    var float = parseInt(value);
+
+    if(Number.isNaN(float)) {
+      return 0;
+    } else {
+      return float;
+    }
   },
 
+  /**
+   * @param {*} value
+   * @returns {Number}
+   */
   float: function(value) {
-    return parseFloat(value.replace(/\,/g, '.'));
+
+    var float = parseFloat(value);
+
+    if(Number.isNaN(float)) {
+      return 0;
+    } else {
+      return float;
+    }
   },
 
   bool: function(value) {
