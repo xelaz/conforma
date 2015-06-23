@@ -230,13 +230,12 @@ Conforma.prototype.filter = function(key, filter, options) {
 
 /**
  *
- * @param {string} field
- * @param {*}      validator
- * @param {object} options
+ * @param {string}  field
+ * @param {*}       validator
+ * @param {object} [options]
  * @returns {Conforma}
  */
 Conforma.prototype.validate = function(field, validator, options) {
-
   var _self = this;
 
   if(!this._validator[field]) {
