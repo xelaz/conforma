@@ -1,6 +1,6 @@
 {
   "name": "conforma",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "simple form data filter and validator",
   "main": "index.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "bluebird": "^2.9.30",
     "mpath": "^0.2.1",
+    "node.extend": "^1.1.5",
     "sanitizer": "^0.1.2",
     "xregexp": "^2.0.0"
   },

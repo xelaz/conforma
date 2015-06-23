@@ -4,7 +4,8 @@ var util = require('util'),
   mpath = require('mpath'),
   XRegExp = require('xregexp').XRegExp,
   sanitizer = require('sanitizer'),
-  Promise = require("bluebird");
+  Promise = require("bluebird"),
+  _extend = require('node.extend');
 
 var escapeChars = {
   lt: '<',
@@ -111,7 +112,7 @@ var _validator = {
   required: function(options) {
     return function(field, value) {
       if(!value) {
-        return new FormDataError(field, 'Field :path: :value: is required', value);
+        return new ConformaError(field, 'Field :path: :value: is required', value);
       }
     };
   },
@@ -121,7 +122,7 @@ var _validator = {
 
     return function(field, value) {
       if(!regex.test(value)) {
-        return new FormDataError(field, 'email.invalid.format %s', value);
+        return new ConformaError(field, 'email.invalid.format %s', value);
       }
     };
   },
@@ -131,7 +132,7 @@ var _validator = {
 
     return function(field, value) {
       if(!regex.test(value)) {
-        return new FormDataError(field, 'only.alpha.allowed', value);
+        return new ConformaError(field, 'only.alpha.allowed', value);
       }
     };
   },
@@ -141,7 +142,7 @@ var _validator = {
 
     return function(field, value) {
       if(!regex.test(value)) {
-        return new FormDataError(field, 'only.alnum.allowed', value);
+        return new ConformaError(field, 'only.alnum.allowed', value);
       }
     };
   }
@@ -155,12 +156,11 @@ var Conforma = function() {
 };
 
 /**
- *
  * @param {object} data
  * @returns {Conforma}
  */
 Conforma.prototype.setData = function(data) {
-  this._data = data || {};
+  this._data = _extend(true, this._data, data || {});
 
   return this;
 };
@@ -180,16 +180,18 @@ Conforma.prototype.getData = function(clean) {
 
 /**
  * @param {*} value
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.default = function(value) {
-  this._data = util._extend(value, this._data);
+  this._data = _extend(true, value, this._data);
 
   return this;
 };
 
 /**
  * @param {*} value
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.reflective = function(value) {
@@ -203,6 +205,7 @@ Conforma.prototype.reflective = function(value) {
  * @param {string}           key
  * @param {*}                filter
  * @param {object} [options] options
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.filter = function(key, filter, options) {
@@ -255,6 +258,7 @@ Conforma.prototype.validate = function(field, validator, options) {
  *
  * @param field
  * @param key
+ *
  * @private
  */
 Conforma.prototype._applyValidator = function (field, key) {
@@ -283,6 +287,7 @@ Conforma.prototype._applyValidator = function (field, key) {
 
 /**
  * @returns {Conforma}
+ *
  * @private
  */
 Conforma.prototype._runFilter = function() {
@@ -354,9 +359,17 @@ Conforma.prototype.exec = function(done) {
 };
 
 /**
- *
- * @param needed
- * @param obj
+ * @returns {Conforma}
+ */
+Conforma.prototype.reset = function() {
+  this._data = {};
+
+  return this;
+};
+
+/**
+ * @param {*} needed
+ * @param {*} obj
  * @returns {*}
  */
 function reflective(needed, obj) {
@@ -372,8 +385,7 @@ function reflective(needed, obj) {
   return needed;
 }
 
-Conforma.ConformaError = ConformaError;
-Conforma.reflective = reflective;
+module.exports.Conforma = Conforma;
 
-
-module.exports = Conforma;
+module.exports.ConformaError = ConformaError;
+module.exports.reflective = reflective;

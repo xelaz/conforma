@@ -1,7 +1,7 @@
 "use strict";
 
 var assert = require("assert"),
-  Conforma = require('../index');
+  Conforma = require('../index').Conforma;
 
 describe('Filter', function() {
 
