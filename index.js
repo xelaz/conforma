@@ -194,8 +194,8 @@ Conforma.prototype.default = function(value) {
  *
  * @returns {Conforma}
  */
-Conforma.prototype.reflective = function(value) {
-  this._data = reflective(value, this._data);
+Conforma.prototype.conform = function(value) {
+  this._data = conform(value, this._data);
 
   return this;
 };
@@ -337,21 +337,20 @@ Conforma.prototype.exec = function(done) {
     });
   }
 
-  return Promise.all(sync).then(function(a, next) {
-    var error = a || [],
-      newError = [];
+  return Promise.all(sync).then(function(err) {
+    var errors = err || [],
+      newErrors = [];
 
-    error.forEach(function(err) {
-      err && newError.push(err);
+    errors.forEach(function(err) {
+      err && newErrors.push(err);
     });
 
-    if(newError.length) {
+    if(newErrors.length) {
+      var nErr = new Error('Conforma Validation Error');
 
-      var e = new Error('Validation Error');
+      nErr.errors = newErrors;
 
-      e.errors = newError;
-
-      throw e;
+      throw nErr;
     } else {
       return _self.getData();
     }
@@ -372,12 +371,12 @@ Conforma.prototype.reset = function() {
  * @param {*} obj
  * @returns {*}
  */
-function reflective(needed, obj) {
+function conform(needed, obj) {
   Object.keys(needed).forEach(function(key) {
     var v = obj.hasOwnProperty(key) ? obj[key] : false;
 
     if(typeof v === 'function' || (v && typeof v === 'object')) {
-      needed[key] = reflective(needed[key], obj[key]);
+      needed[key] = conform(needed[key], obj[key]);
     } else if(v !== false) {
       needed[key] = v;
     }
@@ -388,4 +387,4 @@ function reflective(needed, obj) {
 module.exports.Conforma = Conforma;
 
 module.exports.ConformaError = ConformaError;
-module.exports.reflective = reflective;
+module.exports.conform = conform;

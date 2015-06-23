@@ -83,7 +83,7 @@ describe('Data', function() {
           },
           foo: 'bar'
         })
-        .reflective({
+        .conform({
           child: null,
           parent: {
             child1: 0,
