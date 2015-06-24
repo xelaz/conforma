@@ -2,151 +2,11 @@
 
 var util = require('util'),
   mpath = require('mpath'),
-  XRegExp = require('xregexp').XRegExp,
-  sanitizer = require('sanitizer'),
   Promise = require("bluebird"),
-  _extend = require('node.extend');
-
-var escapeChars = {
-  lt: '<',
-  gt: '>',
-  quot: '"',
-  apos: "'",
-  amp: '&'
-};
-
-function ConformaError(field, msg, value) {
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = msg;
-  this.field = field;
-  this.value = value;
-}
-
-//from underscore.string
-var reversedEscapeChars = {}, key;
-for(key in escapeChars){ reversedEscapeChars[escapeChars[key]] = key; }
-
-var _filter = {
-
-  /**
-   * @param {*} value
-   * @returns {Number}
-   */
-  int: function(value) {
-    var float = parseInt(value);
-
-    if(Number.isNaN(float)) {
-      return 0;
-    } else {
-      return float;
-    }
-  },
-
-  /**
-   * @param {*} value
-   * @returns {Number}
-   */
-  float: function(value) {
-
-    var float = parseFloat(value);
-
-    if(Number.isNaN(float)) {
-      return 0;
-    } else {
-      return float;
-    }
-  },
-
-  bool: function(value) {
-    if (typeof value === 'string') {
-      var s = value.toLowerCase();
-      return s === 'true' || s === 'yes' || s === 'on' || s === '1';
-    } else {
-      return value === true || value === 1;
-    }
-  },
-
-  string: function(value) {
-    return value + '';
-  },
-
-  trim: function(value) {
-    if(typeof value !== 'string') {
-      value += '';
-    }
-
-    return value.trim();
-  },
-
-  toLowerCase: function(value) {
-    if(typeof value !== 'string') {
-      value += '';
-    }
-
-    return value.toLowerCase();
-  },
-
-  toUpperCase: function(value) {
-    if(typeof value !== 'string') {
-      value += '';
-    }
-
-    return value.toUpperCase();
-  },
-
-  escapeHtml: function(value) {
-    return value.replace(/[&<>"']/g, function(m){ return '&' + reversedEscapeChars[m] + ';'; });
-  },
-
-  stripHtml: function(value) {
-    return sanitizer.sanitize(value).replace(/(<([^>]+)>)/ig, '');
-  },
-
-  email: function(value) {
-    return sanitizer.sanitize(value).replace(/a-z0-9_\.-@/ig, '');
-  }
-};
-
-var _validator = {
-  required: function(options) {
-    return function(field, value) {
-      if(!value) {
-        return new ConformaError(field, 'Field :path: :value: is required', value);
-      }
-    };
-  },
-
-  email: function(options) {
-    var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    return function(field, value) {
-      if(!regex.test(value)) {
-        return new ConformaError(field, 'email.invalid.format %s', value);
-      }
-    };
-  },
-
-  alpha: function(options) {
-    var regex = options === true ? XRegExp('^\\p{L}+\\s?\\p{L}+$') : XRegExp('^\\p{L}+$');
-
-    return function(field, value) {
-      if(!regex.test(value)) {
-        return new ConformaError(field, 'only.alpha.allowed', value);
-      }
-    };
-  },
-
-  alnum: function(options) {
-    var regex = options === true ? XRegExp('^\\p{L}+\\s?\\d?$') : XRegExp('^\\p{L}+\\d?$');
-
-    return function(field, value) {
-      if(!regex.test(value)) {
-        return new ConformaError(field, 'only.alnum.allowed', value);
-      }
-    };
-  }
-};
+  _extend = require('node.extend'),
+  _filter = require('./lib/filter'),
+  _validator = require('./lib/validator'),
+  _error = require('./lib/error');
 
 var Conforma = function() {
   this._filter = [];
@@ -166,6 +26,9 @@ Conforma.prototype.setData = function(data) {
 };
 
 /**
+ * without start exec you get can get filtered or raw data,
+ * after exec you get only filtered data
+ *
  * @param {bool} [clean] - get clean or raw data
  *
  * @returns {{}|*}
@@ -290,7 +153,6 @@ Conforma.prototype._applyValidator = function (field, key) {
  * @private
  */
 Conforma.prototype._runFilter = function() {
-  //console.log('BEFORE FILTER: \n', this._data);
   var fieldValue, field;
 
   for(field in this._filter) {
@@ -307,7 +169,6 @@ Conforma.prototype._runFilter = function() {
     mpath.set(field, fieldValue, this._data);
   }
 
-  //console.log('AFTER FILTER: \n', this._data);
   return this;
 };
 
@@ -316,7 +177,6 @@ Conforma.prototype._runFilter = function() {
  * @returns {Promise}
  */
 Conforma.prototype.exec = function(done) {
-
   this._runFilter();
 
   var _self = this,
@@ -360,7 +220,10 @@ Conforma.prototype.exec = function(done) {
  * @returns {Conforma}
  */
 Conforma.prototype.reset = function() {
+  this._filter = [];
+  this._validator = [];
   this._data = {};
+  this._required = {};
 
   return this;
 };
@@ -368,6 +231,7 @@ Conforma.prototype.reset = function() {
 /**
  * @param {*} needed
  * @param {*} obj
+ *
  * @returns {*}
  */
 function conform(needed, obj) {
@@ -384,6 +248,5 @@ function conform(needed, obj) {
 }
 
 module.exports.Conforma = Conforma;
-
-module.exports.ConformaError = ConformaError;
+module.exports.ConformaError = _error;
 module.exports.conform = conform;

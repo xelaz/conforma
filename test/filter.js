@@ -11,15 +11,20 @@ describe('Filter', function() {
       var filtered = conforma.setData({
         value1:' test ',
         value2:'test    ',
-        value3: ' test'})
+        value3: ' test',
+        value4: {
+          value1: ' test '
+        }})
         .filter('value1', 'trim')
         .filter('value2', 'trim')
         .filter('value3', 'trim')
+        .filter('value4.value1', 'trim')
         .getData(true);
 
       assert.equal('test', filtered.value1);
       assert.equal('test', filtered.value2);
       assert.equal('test', filtered.value3);
+      assert.equal('test', filtered.value4.value1);
     });
   });
 
@@ -35,7 +40,10 @@ describe('Filter', function() {
         value6:2.51,
         value7:undefined,
         value8: 'abc',
-        value9: ''
+        value9: '',
+        value10: {
+          value1: '123'
+        }
       })
         .filter('value1', 'int')
         .filter('value2', 'int')
@@ -46,6 +54,7 @@ describe('Filter', function() {
         .filter('value7', 'int')
         .filter('value8', 'int')
         .filter('value9', 'int')
+        .filter('value10.value1', 'int')
         .getData(true);
 
       assert.equal(123, filtered.value1, 'value1 is not integer');
@@ -57,6 +66,7 @@ describe('Filter', function() {
       assert.equal(0, filtered.value7, 'value7 is not integer');
       assert.equal(0, filtered.value8, 'value8 is not integer');
       assert.equal(0, filtered.value9, 'value9 is not integer');
+      assert.equal(123, filtered.value10.value1, 'value10.value1 is not integer');
     });
   });
 
