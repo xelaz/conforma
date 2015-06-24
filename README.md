@@ -1,5 +1,5 @@
 # conforma
-Filter, validate and confirm JSON data from your POST data in Express
+Filter, validate and conform your data from POST request data in Express
 
 ## Install
 npm install conforma --save
@@ -76,8 +76,7 @@ If your data is valid, then you get the filtered and validated data:
   nested: 
    { value1: 'email(at)localhost',
      value2: 'HÄNSEL UND GRETEL',
-     value3: '&lt;html&gt;Hello World!&lt;/html&gt;',
-     value4: 'SOME TRASH' 
+     value3: '&lt;html&gt;Hello World!&lt;/html&gt;'
    } 
 }
 ```
