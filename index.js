@@ -2,20 +2,11 @@
 
 var util = require('util'),
   mpath = require('mpath'),
-  XRegExp = require('xregexp').XRegExp,
   Promise = require("bluebird"),
   _extend = require('node.extend'),
   _filter = require('./lib/filter'),
-  _validator = require('./lib/validator');
-
-function ConformaError(field, msg, value) {
-  Error.captureStackTrace(this, this.constructor);
-
-  this.name = this.constructor.name;
-  this.message = msg;
-  this.field = field;
-  this.value = value;
-}
+  _validator = require('./lib/validator'),
+  _error = require('./lib/error');
 
 var Conforma = function() {
   this._filter = [];
@@ -35,6 +26,9 @@ Conforma.prototype.setData = function(data) {
 };
 
 /**
+ * without start exec you get can get filtered or raw data,
+ * after exec you get only filtered data
+ *
  * @param {bool} [clean] - get clean or raw data
  *
  * @returns {{}|*}
@@ -159,7 +153,6 @@ Conforma.prototype._applyValidator = function (field, key) {
  * @private
  */
 Conforma.prototype._runFilter = function() {
-  //console.log('BEFORE FILTER: \n', this._data);
   var fieldValue, field;
 
   for(field in this._filter) {
@@ -176,7 +169,6 @@ Conforma.prototype._runFilter = function() {
     mpath.set(field, fieldValue, this._data);
   }
 
-  //console.log('AFTER FILTER: \n', this._data);
   return this;
 };
 
@@ -185,7 +177,6 @@ Conforma.prototype._runFilter = function() {
  * @returns {Promise}
  */
 Conforma.prototype.exec = function(done) {
-
   this._runFilter();
 
   var _self = this,
@@ -229,7 +220,10 @@ Conforma.prototype.exec = function(done) {
  * @returns {Conforma}
  */
 Conforma.prototype.reset = function() {
+  this._filter = [];
+  this._validator = [];
   this._data = {};
+  this._required = {};
 
   return this;
 };
@@ -254,6 +248,5 @@ function conform(needed, obj) {
 }
 
 module.exports.Conforma = Conforma;
-
-module.exports.ConformaError = ConformaError;
+module.exports.ConformaError = _error;
 module.exports.conform = conform;
