@@ -69,9 +69,9 @@ describe('Data', function() {
     });
   });
 
-  describe('reflective', function() {
+  describe('conform', function() {
 
-    it('must contain only reflective data', function() {
+    it('must contain only conformed data structure', function() {
       var conforma = new Conforma();
       var data = conforma
         .setData({
@@ -81,13 +81,21 @@ describe('Data', function() {
             child1: '4',
             child2: 22
           },
-          foo: 'bar'
+          foo: 'bar',
+
+          fun2: function() {
+            console.log('fun');
+          }
         })
         .conform({
           child: null,
           parent: {
             child1: 0,
             child3: null
+          },
+
+          fun: function() {
+            console.log('fun');
           }
         })
         .getData();
