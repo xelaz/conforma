@@ -42,6 +42,15 @@ Conforma.prototype.getData = function(clean) {
 };
 
 /**
+ * @param {string} field - get field value
+ *
+ * @returns {*|undefined}
+ */
+Conforma.prototype.getValue = function(field) {
+  return mpath.get(field, this._data);
+};
+
+/**
  * @param {*} value
  *
  * @returns {Conforma}
@@ -67,11 +76,10 @@ Conforma.prototype.conform = function(value) {
  *
  * @param {string}           key
  * @param {*}                filter
- * @param {object} [options] options
  *
  * @returns {Conforma}
  */
-Conforma.prototype.filter = function(key, filter, options) {
+Conforma.prototype.filter = function(key, filter) {
   if(!key) {
     return this;
   }
@@ -92,13 +100,12 @@ Conforma.prototype.filter = function(key, filter, options) {
 };
 
 /**
- *
  * @param {string}  field
  * @param {*}       validator
- * @param {object} [options]
+ *
  * @returns {Conforma}
  */
-Conforma.prototype.validate = function(field, validator, options) {
+Conforma.prototype.validate = function(field, validator) {
   var _self = this;
 
   if(!this._validator[field]) {
@@ -118,8 +125,8 @@ Conforma.prototype.validate = function(field, validator, options) {
 
 /**
  *
- * @param field
- * @param key
+ * @param {string} field
+ * @param {string} key
  *
  * @private
  */
@@ -153,20 +160,22 @@ Conforma.prototype._applyValidator = function (field, key) {
  * @private
  */
 Conforma.prototype._runFilter = function() {
-  var fieldValue, field;
+  var fieldValue;
 
-  for(field in this._filter) {
-    fieldValue = mpath.get(field, this._data);
+  for(var field in this._filter) {
+    if(this._filter.hasOwnProperty(field)) {
+      fieldValue = this.getValue(field);
 
-    this._filter[field].forEach(function(filter) {
-      if(typeof filter === 'function') {
-        fieldValue = filter.call(undefined, fieldValue);
-      } else if(_filter[filter]) {
-        fieldValue = _filter[filter].call(undefined, fieldValue);
-      }
-    });
+      this._filter[field].forEach(function (filter) {
+        if (typeof filter === 'function') {
+          fieldValue = filter.call(undefined, fieldValue);
+        } else if (_filter[filter]) {
+          fieldValue = _filter[filter].call(undefined, fieldValue);
+        }
+      });
 
-    mpath.set(field, fieldValue, this._data);
+      mpath.set(field, fieldValue, this._data);
+    }
   }
 
   return this;
@@ -179,21 +188,21 @@ Conforma.prototype._runFilter = function() {
 Conforma.prototype.exec = function(done) {
   this._runFilter();
 
-  var _self = this,
-    sync = [],
-    field, val;
+  var _self = this, sync = [], val;
 
-  for(field in _self._validator) {
-    val = mpath.get(field, this._data);
+  for(var field in this._validator) {
+    if(this._validator.hasOwnProperty(field)) {
+      val = this.getValue(field);
 
-    if(_self._required.hasOwnProperty(field) && !val) {
-      sync.push(_validator.required()(field, val));
-      continue;
+      if(_self._required.hasOwnProperty(field) && !val) {
+        sync.push(_validator.required()(field, val));
+        continue;
+      }
+
+      _self._validator[field].forEach(function(f) {
+        sync.push(f.call(_self, field, val));
+      });
     }
-
-    _self._validator[field].forEach(function(f) {
-      sync.push(f.call(_self, field, val));
-    });
   }
 
   return Promise.all(sync).then(function(err) {

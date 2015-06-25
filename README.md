@@ -7,9 +7,7 @@ npm install conforma --save
 ## Usage
 
 ```javascript
-var conforma = require('./index');
-
-var formData = new conforma.Conforma();
+var conforma = require('conforma');
 
 formData.setData({
   value1: '123',
@@ -40,13 +38,11 @@ formData.setData({
   .filter('nested.value2', ['trim', 'toUpperCase'])
   .filter('nested.value3', ['string', 'trim', 'escapeHtml'])
   .validate('nested.value1', ['email', 'required'])
-  .validate('nested.value2', 'alpha', true)
+  .validate('nested.value2', {alpha: true})
   .exec(function(err, data) {
-    if(err) {
-      console.log('Error: ', err);
-    }
+    err &&  console.log('Error: ', err);
 
-    console.log('Data: ', data);
+    data && console.log('Data: ', data);
   });
 ```
 
@@ -85,13 +81,14 @@ If your data is valid, then you get the filtered and validated data:
 * .setData(object)
 * .getData(filtered)
 * .filter(key, filter)
-* .validate(key, validator, options)
+* .validate(key, validator)
 * .exec(callback) return Promise
 * .reset
 
 ## TODO
 * extend all tests
 * create some examples
+* extend validator/filter
 * extend README
 * your suggestion
 * bug fixing

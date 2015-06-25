@@ -1,6 +1,6 @@
 {
   "name": "conforma",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "simple form data filter and validator",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "mpath": "^0.2.1",
     "node.extend": "^1.1.5",
     "sanitizer": "^0.1.2",
+    "validator": "^3.40.1",
     "xregexp": "^2.0.0"
   },
   "devDependencies": {
