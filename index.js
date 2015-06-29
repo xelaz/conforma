@@ -100,8 +100,8 @@ Conforma.prototype.filter = function(key, filter) {
 };
 
 /**
- * @param {string}  field
- * @param {*}       validator
+ * @param {string} field
+ * @param {*}      validator
  *
  * @returns {Conforma}
  */
@@ -182,7 +182,8 @@ Conforma.prototype._runFilter = function() {
 };
 
 /**
- * @param {function} done
+ * @param {function} [done] - callback or promise
+ *
  * @returns {Promise}
  */
 Conforma.prototype.exec = function(done) {
