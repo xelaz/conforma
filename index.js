@@ -258,5 +258,6 @@ function conform(needed, obj) {
 }
 
 module.exports.Conforma = Conforma;
+module.exports.ConformaFilter = _filter;
 module.exports.ConformaError = _error;
 module.exports.conform = conform;

@@ -110,4 +110,23 @@ describe('Filter', function() {
     });
   });
 
+  describe('addslashes', function() {
+    it('value must be float', function() {
+      var conforma = new Conforma();
+      var filtered = conforma.setData({
+        value1:'Lorem ipsum" dolo"r sit amet',
+        value2:'Lorem ipsum\' dolo\'r sit amet',
+        value3:'Lorem"ipsum\' dolo\'r sit"amet'
+      })
+        .filter('value1', 'addslashes')
+        .filter('value2', 'addslashes')
+        .filter('value3', 'addslashes')
+        .getData(true);
+
+      assert.equal('Lorem ipsum\\" dolo\\"r sit amet', filtered.value1, 'value1 is not escaped with slashes');
+      assert.equal('Lorem ipsum\\\' dolo\\\'r sit amet', filtered.value2, 'value2 is not escaped with slashes');
+      assert.equal('Lorem\\"ipsum\\\' dolo\\\'r sit\\"amet', filtered.value3, 'value3 is not escaped with slashes');
+    });
+  });
+
 });
