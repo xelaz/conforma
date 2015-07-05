@@ -197,14 +197,13 @@ Conforma.prototype.exec = function(done) {
     if(this._validator.hasOwnProperty(field)) {
       val = this.getValue(field);
 
-      if(_self._required.hasOwnProperty(field) && !val) {
-        sync.push(_validator.required()(field, val));
-        continue;
+      if(_self._required.hasOwnProperty(field)) {
+        sync.push(Promise.try(_validator.required(), [field, val], _self));
+      } else {
+        _self._validator[field].forEach(function(f) {
+          sync.push(Promise.try(f, [field, val], _self));
+        });
       }
-
-      _self._validator[field].forEach(function(f) {
-        sync.push(f.call(_self, field, val));
-      });
     }
   }
 

@@ -115,7 +115,10 @@ describe('Filter', function() {
         value2: '',
         value4: {
           child1: 'TEST',
-          child2: ''
+          child2: '',
+          child4: 0,
+          child5: false,
+          child6: null
         }
       })
         .validate('value1', 'required')
@@ -124,6 +127,9 @@ describe('Filter', function() {
         .validate('value4.child1', 'required')
         .validate('value4.child2', 'required')
         .validate('value4.child3', 'required')
+        .validate('value4.child4', 'required')
+        .validate('value4.child5', 'required')
+        .validate('value4.child6', 'required')
         .exec()
         .catch(function(err) {
           var errors = err.errors;
@@ -134,6 +140,7 @@ describe('Filter', function() {
           var err2 = errors.shift();
           assert.equal(err2.field, 'value4.child3');
 
+          assert.equal(0, errors.length);
           done();
         });
     });
