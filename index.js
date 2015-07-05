@@ -8,11 +8,13 @@ var util = require('util'),
   _validator = require('./lib/validator'),
   _error = require('./lib/error');
 
-var Conforma = function() {
+var Conforma = function(data) {
   this._filter = [];
   this._validator = [];
   this._data = {};
   this._required = {};
+
+  this.setData(data);
 };
 
 /**

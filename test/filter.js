@@ -129,4 +129,59 @@ describe('Filter', function() {
     });
   });
 
+  describe('bool', function() {
+    it('value must be boolean', function() {
+      var conforma = new Conforma();
+      var filtered = conforma.setData({
+        value1:'YES',
+        value2:'yes',
+        value3:'1',
+        value4:'0',
+        value5:'on',
+        value6:'false',
+        value7:false,
+        value8:null,
+        value9:1,
+        value10:2,
+        value11:0,
+        value12:undefined,
+        value13:' ',
+        value14:'',
+        value15:'abc'
+
+      })
+        .filter('value1', 'bool')
+        .filter('value2', 'bool')
+        .filter('value3', 'bool')
+        .filter('value4', 'bool')
+        .filter('value5', 'bool')
+        .filter('value6', 'bool')
+        .filter('value7', 'bool')
+        .filter('value8', 'bool')
+        .filter('value9', 'bool')
+        .filter('value10', 'bool')
+        .filter('value11', 'bool')
+        .filter('value12', 'bool')
+        .filter('value13', 'bool')
+        .filter('value14', 'bool')
+        .filter('value15', 'bool')
+        .getData(true);
+
+      assert.strictEqual(true, filtered.value1, 'value1 must be true');
+      assert.strictEqual(true, filtered.value2, 'value2 must be true');
+      assert.strictEqual(true, filtered.value3, 'value3 must be true');
+      assert.strictEqual(false, filtered.value4, 'value4 must be false');
+      assert.strictEqual(true, filtered.value5, 'value5 must be true');
+      assert.strictEqual(false, filtered.value6, 'value6 must be false');
+      assert.strictEqual(false, filtered.value7, 'value7 must be false');
+      assert.strictEqual(false, filtered.value8, 'value8 must be false');
+      assert.strictEqual(true, filtered.value9, 'value9 must be true');
+      assert.strictEqual(false, filtered.value10, 'value10 must be false');
+      assert.strictEqual(false, filtered.value11, 'value11 must be false');
+      assert.strictEqual(false, filtered.value12, 'value12 must be false');
+      assert.strictEqual(false, filtered.value13, 'value13 must be false');
+      assert.strictEqual(false, filtered.value14, 'value14 must be false');
+      assert.strictEqual(false, filtered.value15, 'value15 must be false');
+    });
+  });
 });

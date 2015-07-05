@@ -7,7 +7,6 @@ var assert = require("assert"),
 describe('Filter', function() {
 
   describe('alpha', function() {
-
     it('should disallowed whitespaces', function(done) {
       var conforma = new Conforma();
       conforma.setData({
@@ -63,7 +62,6 @@ describe('Filter', function() {
   });
 
   describe('alnum', function() {
-
     it('should disallowed whitespaces', function(done) {
       var conforma = new Conforma();
       conforma.setData({
@@ -110,7 +108,6 @@ describe('Filter', function() {
   });
 
   describe('required', function() {
-
     it('should required', function(done) {
       var conforma = new Conforma();
       conforma.setData({
@@ -143,8 +140,7 @@ describe('Filter', function() {
   });
 
   describe('notEmpty', function() {
-
-    it('should required', function(done) {
+    it('should not be empty', function(done) {
       var conforma = new Conforma();
       conforma.setData({
         value1: 'TEST',
