@@ -9,10 +9,10 @@ var util = require('util'),
   _error = require('./lib/error');
 
 var Conforma = function(data) {
-  this._filter = [];
+  this._filter    = [];
   this._validator = [];
-  this._data = {};
-  this._required = {};
+  this._required  = [];
+  this._data      = {};
 
   this.setData(data);
 };
@@ -197,13 +197,14 @@ Conforma.prototype.exec = function(done) {
     if(this._validator.hasOwnProperty(field)) {
       val = this.getValue(field);
 
-      if(_self._required.hasOwnProperty(field)) {
+      if(field in _self._required) {
         sync.push(Promise.try(_validator.required(), [field, val], _self));
-      } else {
-        _self._validator[field].forEach(function(f) {
-          sync.push(Promise.try(f, [field, val], _self));
-        });
+        delete _self._required[field];
       }
+
+      _self._validator[field].forEach(function(f) {
+        sync.push(Promise.try(f, [field, val], _self));
+      });
     }
   }
 
@@ -231,10 +232,10 @@ Conforma.prototype.exec = function(done) {
  * @returns {Conforma}
  */
 Conforma.prototype.reset = function() {
-  this._filter = [];
+  this._filter    = [];
   this._validator = [];
-  this._data = {};
-  this._required = {};
+  this._required  = [];
+  this._data      = {};
 
   return this;
 };
