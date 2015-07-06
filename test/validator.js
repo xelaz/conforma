@@ -185,4 +185,75 @@ describe('Filter', function() {
         });
     });
   });
+
+  describe('email', function() {
+    it('should be error on wrong email address', function (done) {
+      this.timeout(5000);
+
+      var conforma = new Conforma();
+      conforma.setData({
+        value1: 'unknownmail@abrakadabrahost.com',
+        value2: 'unknownmail@localhost',
+        value3: 'unknownmail'
+      })
+        .validate('value1', 'email')
+        .validate('value2', 'email')
+        .validate('value3', 'email')
+        .exec()
+        .catch(function (err) {
+          var errors = err.errors;
+
+          var err1 = errors.shift();
+          assert.equal(err1.field, 'value2');
+
+          var err2 = errors.shift();
+          assert.equal(err2.field, 'value3');
+
+          done();
+        });
+    });
+  });
+
+  describe('emailMx', function() {
+    it('should be error on unknown host', function (done) {
+      this.timeout(5000);
+
+      var conforma = new Conforma();
+      conforma.setData({
+        value1: 'unknownmail@abrakadabrahost.com',
+        value2: 'unknownmail'
+      })
+        .validate('value1', 'emailMx')
+        .validate('value2', 'emailMx')
+        .exec()
+        .catch(function (err) {
+          var errors = err.errors;
+
+          var err1 = errors.shift();
+          assert.equal(err1.field, 'value1');
+
+          var err2 = errors.shift();
+          assert.equal(err2.field, 'value2');
+
+          done();
+        });
+    });
+
+    it('should be ok on known host', function (done) {
+      this.timeout(5000);
+
+      var conforma = new Conforma();
+      conforma.setData({
+        value1: 'no-reply@gmail.com',
+        value2: 'no-reply@hotmail.com'
+      })
+        .validate('value1', 'emailMx')
+        .validate('value2', 'emailMx')
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+  });
+
 });
