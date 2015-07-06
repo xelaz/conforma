@@ -234,6 +234,7 @@ describe('Filter', function() {
 
           var err2 = errors.shift();
           assert.equal(err2.field, 'value2');
+          assert.equal(err2.message, 'email.invalid.format');
 
           done();
         });
