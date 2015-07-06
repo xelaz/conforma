@@ -1,3 +1,5 @@
+"use strict";
+
 var conforma = require('./../index');
 
 var formData = new conforma.Conforma();
