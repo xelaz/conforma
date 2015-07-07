@@ -199,12 +199,11 @@ Conforma.prototype.exec = function(done) {
 
       if(field in _self._required) {
         sync.push(Promise.try(_validator.required(), [field, val], _self));
-        delete _self._required[field];
+      } else {
+        _self._validator[field].forEach(function(f) {
+          sync.push(Promise.try(f, [field, val], _self));
+        });
       }
-
-      _self._validator[field].forEach(function(f) {
-        sync.push(Promise.try(f, [field, val], _self));
-      });
     }
   }
 

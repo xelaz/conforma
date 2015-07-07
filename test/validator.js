@@ -1,4 +1,3 @@
-
 "use strict";
 
 var assert = require("assert"),
@@ -121,12 +120,12 @@ describe('Filter', function() {
           child6: null
         }
       })
-        .validate('value1', 'required')
+        .validate('value1', ['required', 'notEmpty', 'required'])
         .validate('value2', 'required')
         .validate('value3', 'required')
         .validate('value4.child1', 'required')
         .validate('value4.child2', 'required')
-        .validate('value4.child3', 'required')
+        .validate('value4.child3', ['required', 'notEmpty', 'required'])
         .validate('value4.child4', 'required')
         .validate('value4.child5', 'required')
         .validate('value4.child6', 'required')
@@ -241,7 +240,7 @@ describe('Filter', function() {
     });
 
     it('should be ok on known host', function (done) {
-      this.timeout(5000);
+      this.timeout(6000);
 
       var conforma = new Conforma();
       conforma.setData({
