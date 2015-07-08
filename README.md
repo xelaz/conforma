@@ -6,75 +6,81 @@ npm install conforma --save
 
 ## Usage
 
+More examples you can find in example path or in test.
+
 ```javascript
-var conforma = require('conforma');
 
-formData.setData({
-  value1: '123',
-  value2: 'yes',
-  nested: {
-    value1: 'email(at)localhost',
-    value2: 'Hänsel und Gretel ',
-    value4: 'SOME TRASH'
-  },
-  trashValue: 'foobar'
-}).default({
-  value1: 1,
-  value3: 'foobar',
-  nested: {
-    value3: '   <html>Hello World!</html>'
-  }
-}).conform({
-  value1: true,
-  value2: true,
-  nested: {
-    value1: true,
-    value2: true,
-    value3: true
-  }
-})
-  .filter('value1', 'int')
-  .filter('value2', 'bool')
-  .filter('nested.value2', ['trim', 'toUpperCase'])
-  .filter('nested.value3', ['string', 'trim', 'escapeHtml'])
-  .validate('nested.value1', ['email', 'required'])
-  .validate('nested.value2', {alpha: true})
-  .exec(function(err, data) {
-    err &&  console.log('Error: ', err);
-
-    data && console.log('Data: ', data);
-  });
+    var conforma = require('conforma');
+    
+    formData.setData({
+      value1: '123',
+      value2: 'yes',
+      nested: {
+        value1: 'email(at)localhost',
+        value2: 'Hänsel und Gretel ',
+        value4: 'SOME TRASH'
+      },
+      trashValue: 'foobar'
+    }).default({
+      value1: 1,
+      value3: 'foobar',
+      nested: {
+        value3: '   <html>Hello World!</html>'
+      }
+    }).conform({
+      value1: true,
+      value2: true,
+      nested: {
+        value1: true,
+        value2: true,
+        value3: true
+      }
+    })
+      .filter('value1', 'int')
+      .filter('value2', 'bool')
+      .filter('nested.value2', ['trim', 'toUpperCase'])
+      .filter('nested.value3', ['string', 'trim', 'escapeHtml'])
+      .validate('nested.value1', ['email', 'required'])
+      .validate('nested.value2', {alpha: true})
+      .exec(function(err, data) {
+        err &&  console.log('Error: ', err);
+        data && console.log('Data: ', data);
+      });
 ```
 
 If your data is invalid, then you get error:
 
 ```javascript
-{ 
-  [Error: Conforma Validation Error]
-  errors: 
-   [ { name: 'ConformaError',
-       message: 'email.invalid.format %s',
-       field: 'nested.value1',
-       value: 'email(at)localhost' 
-     },
-     { name: 'ConformaError',
-       message: 'only.alpha.allowed',
-       field: 'nested.value2',
-       value: 'HÄNSEL UND GRETEL' 
-     } ]
-}
+
+    { 
+      [Error: Conforma Validation Error]
+      errors: 
+       [ { name: 'ConformaError',
+           message: 'email.invalid.format %s',
+           field: 'nested.value1',
+           value: 'email(at)localhost' 
+         },
+         { name: 'ConformaError',
+           message: 'only.alpha.allowed',
+           field: 'nested.value2',
+           value: 'HÄNSEL UND GRETEL' 
+         } ]
+    }
 ```
 
 If your data is valid, then you get the filtered and validated data:
+
 ```javascript
-{ value1: 123,
-  value2: true,
-  nested: 
-   { value1: 'email(at)localhost',
-     value2: 'HÄNSEL UND GRETEL',
-     value3: '&lt;html&gt;Hello World!&lt;/html&gt;'
-   } 
-}
+
+    { 
+      value1: 123,
+      value2: true,
+      nested: 
+       { value1: 'email(at)localhost',
+         value2: 'HÄNSEL UND GRETEL',
+         value3: '&lt;html&gt;Hello World!&lt;/html&gt;'
+       } 
+    }
 ```
 
 ## API
@@ -85,11 +91,37 @@ If your data is valid, then you get the filtered and validated data:
 * .exec(callback) return Promise
 * .reset
 
+## Filter
+* int
+* float
+* bool
+* string
+* trim whitespaces
+* toLowerCase
+* toUpperCase
+* escapeHtml (<>"'& to entities)
+* addslashes (like php)
+* stripHtml (sanitize all html content)
+* email
+
+## Validator
+* required
+* email
+* emailMx
+* alpha (UTF8 and whitespaces)
+* alnum (UTF8 and whitespaces)
+* notEmpty
+* equals
+* compare (with other fields)
+* contains
+* isDate (format please use moment)
+
 ## TODO
 * extend all tests
 * create some examples
 * extend validator/filter
 * extend README
 * your suggestion
+* i18n error messages
 * bug fixing
 

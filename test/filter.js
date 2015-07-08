@@ -184,4 +184,20 @@ describe('Filter', function() {
       assert.strictEqual(false, filtered.value15, 'value15 must be false');
     });
   });
+
+  describe('email', function() {
+    it('should normalize email', function() {
+      var conforma = new Conforma();
+      var filtered = conforma.setData({
+        value1:'TEST@maIL.Com',
+        value2:'email+12345-!§$%&@this is host,.com'
+      })
+        .filter('value1', 'email')
+        .filter('value2', 'email')
+        .getData(true);
+
+      assert.equal('test@mail.com', filtered.value1, 'value1 is not valid mail');
+      assert.equal('email12345@thisishost.com', filtered.value2, 'value2 is not valid mail');
+    });
+  });
 });

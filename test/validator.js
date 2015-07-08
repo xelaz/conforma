@@ -3,7 +3,7 @@
 var assert = require("assert"),
   Conforma = require('../index').Conforma;
 
-describe('Filter', function() {
+describe('Validator', function() {
 
   describe('alpha', function() {
     it('should disallowed whitespaces', function(done) {
@@ -251,6 +251,177 @@ describe('Filter', function() {
         .validate('value2', 'emailMx')
         .exec()
         .then(function() {
+          done();
+        });
+    });
+  });
+
+  describe('contains', function() {
+    it('should contains snippets', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        value1: 'TEST'
+      })
+        .validate('value1', {contains: 'TEST'})
+        .validate('value1', {contains: 'TE'})
+        .validate('value1', {contains: 'ST'})
+        .validate('value1', {contains: 'ES'})
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+
+    it('should not contains snippets', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        value1: 'TEST'
+      })
+        .validate('value1', {contains: 'ABC'})
+        .validate('value1', {contains: 'TA'})
+        .validate('value1', {contains: '1'})
+        .validate('value1', {contains: null})
+        .validate('value1', {contains: false})
+        .exec()
+        .catch(function(err) {
+          assert.equal(4, err.errors.length, 'contains not work');
+          done();
+        });
+    });
+  });
+
+  describe('equals', function() {
+    it('should equals', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        value1: 'TEST',
+        value2: 'test',
+        value3: 12345,
+        value4: true,
+        value5: null
+      })
+        .validate('value1', {equals: 'TEST'})
+        .validate('value2', {equals: 'test'})
+        .validate('value3', {equals: 12345})
+        .validate('value4', {equals: true})
+        .validate('value5', {equals: null})
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+
+    it('should not equals', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        value1: 'TEST',
+        value2: false,
+        value3: '12345'
+
+      })
+        .validate('value1', {equals: 'test'})
+        .validate('value2', {equals: null})
+        .validate('value3', {equals: 12345})
+        .exec()
+        .catch(function(err) {
+          assert.equal(3, err.errors.length, 'equals not work');
+          done();
+        });
+    });
+  });
+
+  describe('compare', function() {
+    it('should equals', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        string: {
+          value1: 'password',
+          value2: 'password'
+        },
+        number: {
+          value1: 12345,
+          value2: 12345
+        },
+        boolean: {
+          value1: true,
+          value2: true
+        },
+        null: {
+          value1: null,
+          value2: null
+        }
+      })
+        .validate('string.value1', {compare: 'string.value2'})
+        .validate('number.value1', {compare: 'number.value2'})
+        .validate('boolean.value1', {compare: 'boolean.value2'})
+        .validate('null.value1', {compare: 'null.value2'})
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+
+    it('should not equals', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        string: {
+          value1: 'PASSWORD',
+          value2: 'password'
+        },
+        number: {
+          value1: '12345',
+          value2: 12345
+        },
+        mixed: {
+          value1: true,
+          value2: null
+        }
+      })
+        .validate('string.value1', {compare: 'string.value2'})
+        .validate('number.value1', {compare: 'number.value2'})
+        .validate('mixed.value1', {compare: 'mixed.value2'})
+        .exec()
+        .catch(function(err) {
+          assert.equal(3, err.errors.length, 'it compares wrong');
+          done();
+        });
+    });
+  });
+
+  describe('isDate', function() {
+    it('should validate date with format', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        date1: '12.31.2015',
+        date2: '31.12.2015'
+      })
+        .validate('date1', {isDate: 'MM.DD.YYYY'})
+        .validate('date2', {isDate: 'DD.MM.YYYY'})
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+
+    it('should validate date without format', function(done) {
+      var conforma = new Conforma();
+
+      conforma.setData({
+        date1: '12.31.2015',
+        date2: '31.12.2015'
+      })
+        .validate('date1', 'isDate')
+        .validate('date2', 'isDate')
+        .exec()
+        .catch(function(err) {
+          assert.equal('date2', err.errors[0].field);
           done();
         });
     });

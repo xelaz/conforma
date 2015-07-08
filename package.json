@@ -1,6 +1,6 @@
 {
   "name": "conforma",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "simple form data filter and validator",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^2.9.30",
+    "moment": "^2.10.3",
     "mpath": "^0.2.1",
     "node.extend": "^1.1.5",
     "sanitizer": "^0.1.2",
