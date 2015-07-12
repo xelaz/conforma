@@ -75,7 +75,8 @@ describe('Filters check', function() {
         value9: '',
         value10: {
           value1: '123'
-        }
+        },
+        value11:'0123'
       })
         .filter('value1', 'int')
         .filter('value2', 'int')
@@ -87,6 +88,7 @@ describe('Filters check', function() {
         .filter('value8', 'int')
         .filter('value9', 'int')
         .filter('value10.value1', 'int')
+        .filter('value11', 'int')
         .getData(true);
 
       assert.equal(123, filtered.value1, 'value1 is not integer');
@@ -99,6 +101,7 @@ describe('Filters check', function() {
       assert.equal(0, filtered.value8, 'value8 is not integer');
       assert.equal(0, filtered.value9, 'value9 is not integer');
       assert.equal(123, filtered.value10.value1, 'value10.value1 is not integer');
+      assert.equal(123, filtered.value11, 'value11 is not integer');
     });
   });
 
