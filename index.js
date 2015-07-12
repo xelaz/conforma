@@ -209,7 +209,7 @@ Conforma.prototype.exec = function(done) {
     if(this._validator.hasOwnProperty(field)) {
       val = this.getValue(field);
 
-      if(field in _self._required) {
+      if(field in _self._required && val === undefined) {
         sync.push(Promise.try(_validator.required(), [field, val], _self));
       } else {
         _self._validator[field].forEach(function(f) {
