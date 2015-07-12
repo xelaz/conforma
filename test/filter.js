@@ -3,7 +3,39 @@
 var assert = require("assert"),
   Conforma = require('../index').Conforma;
 
-describe('Filter', function() {
+describe('Conforma.filter args check', function() {
+  it('should add filter', function() {
+    var formData = new Conforma();
+    var filteredData = formData.setData({
+      value1: 123,
+      value2: 'TEST',
+      value3: 'TEST',
+      value4: 'TEST',
+      value5: 'TEST',
+      value6: 'TEST'
+    })
+      .filter('value1', 'string')
+      .filter('value2', ['string', 'toLowerCase'])
+      .filter('value3', function(value) {
+        return value + 'TEST';
+      })
+      .filter('value4', 'unknown')
+      .filter('value5', ['toLowerCase', 'stringLength', {stringLength: 3}])
+      .filter('value6', {stringLength: 2})
+      .filter('value7', ['string', 'toLowerCase'])
+      .getData(true);
+
+    assert.strictEqual('123', filteredData.value1, 'value1');
+    assert.strictEqual('test', filteredData.value2, 'value2');
+    assert.equal('TESTTEST', filteredData.value3, 'value3');
+    assert.equal('TEST', filteredData.value4, 'value4');
+    assert.equal('tes', filteredData.value5, 'value5');
+    assert.equal('TE', filteredData.value6, 'value6');
+    assert.equal('', filteredData.value7, 'value7');
+  });
+});
+
+describe('Filters check', function() {
 
   describe('trim', function() {
     it('should without spaces at prefix and suffix', function() {
@@ -198,6 +230,24 @@ describe('Filter', function() {
 
       assert.equal('test@mail.com', filtered.value1, 'value1 is not valid mail');
       assert.equal('email12345@thisishost.com', filtered.value2, 'value2 is not valid mail');
+    });
+  });
+
+  describe('stringLength', function() {
+    it('should max size', function() {
+      var conforma = new Conforma();
+      var filtered = conforma.setData({
+        value1: 'String length without max param.',
+        value2:'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonümy eirmod tempor invidunt ut '
+              +'labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores '
+              +'et ea rebum. Stet clita kasd gubergren, nö sea takimata sanctus est Lorem ipsum dolor sit ämet.'
+      })
+        .filter('value1', 'stringLength')
+        .filter('value2', {stringLength: 128})
+        .getData(true);
+
+      assert.equal(32, filtered.value1.length, 'value1 is not same length');
+      assert.equal(128, filtered.value2.length, 'value2 is not same length');
     });
   });
 });

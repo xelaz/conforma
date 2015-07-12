@@ -76,38 +76,44 @@ Conforma.prototype.conform = function(value) {
 
 /**
  *
- * @param {string}           key
- * @param {*}                filter
+ * @param {string}              field
+ * @param {string|array|object} filter
  *
  * @returns {Conforma}
  */
-Conforma.prototype.filter = function(key, filter) {
-  if(!key) {
+Conforma.prototype.filter = function(field, filter) {
+  if(!field || !filter) {
     return this;
   }
 
-  if(!this._filter[key]) {
-    this._filter[key] = [];
+  if(!this._filter[field]) {
+    this._filter[field] = [];
   }
 
   if(typeof filter === 'string' && filter !== '') {
-    this._filter[key].push(filter);
+    this._filter[field].push(filter);
   } else if(util.isArray(filter)) {
-    this._filter[key].push.apply(this._filter[key], filter);
+    this._filter[field].push.apply(this._filter[field], filter);
   } else if(typeof filter === 'function') {
-    this._filter[key].push(filter);
+    this._filter[field].push(filter);
+  } else if(typeof filter === 'object') {
+    this._filter[field].push(filter);
   }
 
   return this;
 };
 
 /**
- * @param {string} field
- * @param {*}      validator
+ * @param {string}              field
+ * @param {string|array|object} validator
  *
  * @returns {Conforma}
  */
 Conforma.prototype.validate = function(field, validator) {
+  if(!field || !validator) {
+    return this;
+  }
+
   var _self = this;
 
   if(!this._validator[field]) {
@@ -146,7 +152,7 @@ Conforma.prototype._applyValidator = function (field, key) {
   } else if(typeof key === 'object') {
     vName = Object.keys(key).pop() || null;
 
-    if(vName && _validator[vName]) {
+    if(vName && vName in _validator) {
       func = _validator[vName].call(_validator, key[vName]);
     }
   }
@@ -170,9 +176,15 @@ Conforma.prototype._runFilter = function() {
 
       this._filter[field].forEach(function (filter) {
         if (typeof filter === 'function') {
-          fieldValue = filter.call(undefined, fieldValue);
-        } else if (_filter[filter]) {
-          fieldValue = _filter[filter].call(undefined, fieldValue);
+          fieldValue = filter.call(_filter, fieldValue);
+        } else if (typeof filter === 'string' && filter in _filter) {
+          fieldValue = _filter[filter].call(_filter, fieldValue);
+        } else if(typeof filter === 'object') {
+          var fName = Object.keys(filter).pop() || null;
+
+          if(fName && fName in _filter) {
+            fieldValue = _filter[fName].call(_filter, fieldValue, filter[fName]);
+          }
         }
       });
 
@@ -216,10 +228,8 @@ Conforma.prototype.exec = function(done) {
     });
 
     if(newErrors.length) {
-      var nErr = new Error('Conforma Validation Error');
-
+      var nErr = new Error('ConformaValidationError');
       nErr.errors = newErrors;
-
       throw nErr;
     } else {
       return _self.getData();
