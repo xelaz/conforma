@@ -60,23 +60,75 @@ describe('Filters check', function() {
     });
   });
 
+  describe('digit', function() {
+    it('value must be digit', function() {
+      var conforma = new Conforma();
+      var filtered = conforma.setData({
+        value1: '123',
+        value2: 123,
+        value3: true,
+        value4: false,
+        value5: null,
+        value6: 2.51,
+        value7: undefined,
+        value8: 'abc123',
+        value9: '',
+        value10: {
+          value1: '123'
+        },
+        value11: '0123',
+        value12: '0000',
+        value13: 'ABcDeF'
+      })
+        .filter('value1', 'digit')
+        .filter('value2', 'digit')
+        .filter('value3', 'digit')
+        .filter('value4', 'digit')
+        .filter('value5', 'digit')
+        .filter('value6', 'digit')
+        .filter('value7', 'digit')
+        .filter('value8', 'digit')
+        .filter('value9', 'digit')
+        .filter('value10.value1', 'digit')
+        .filter('value11', 'digit')
+        .filter('value12', 'digit')
+        .filter('value13', 'digit')
+        .getData(true);
+
+      assert.equal(123, filtered.value1, 'value1 is not digit');
+      assert.equal(123, filtered.value2, 'value2 is not digit');
+      assert.equal(0, filtered.value3, 'value3 is not digit');
+      assert.equal(0, filtered.value4, 'value4 is not digit');
+      assert.equal(0, filtered.value5, 'value5 is not digit');
+      assert.equal(2.51, filtered.value6, 'value6 is not digit');
+      assert.equal(0, filtered.value7, 'value7 is not digit');
+      assert.equal('123', filtered.value8, 'value8 is not digit');
+      assert.equal(0, filtered.value9, 'value9 is not digit');
+      assert.equal(123, filtered.value10.value1, 'value10.value1 is not digit');
+      assert.equal(123, filtered.value11, 'value11 is not digit');
+      assert.equal('0000', filtered.value12, 'value12 is not digit');
+      assert.equal('', filtered.value13, 'value13 is not digit');
+    });
+  });
+
   describe('int', function() {
     it('value must be integer', function() {
       var conforma = new Conforma();
       var filtered = conforma.setData({
-        value1:'123',
-        value2:2,
-        value3:true,
-        value4:false,
-        value5:null,
-        value6:2.51,
-        value7:undefined,
+        value1: '123',
+        value2: 123,
+        value3: true,
+        value4: false,
+        value5: null,
+        value6: 2.51,
+        value7: undefined,
         value8: 'abc',
         value9: '',
         value10: {
           value1: '123'
         },
-        value11:'0123'
+        value11: '0123',
+        value12: '0000'
       })
         .filter('value1', 'int')
         .filter('value2', 'int')
@@ -89,19 +141,21 @@ describe('Filters check', function() {
         .filter('value9', 'int')
         .filter('value10.value1', 'int')
         .filter('value11', 'int')
+        .filter('value12', 'int')
         .getData(true);
 
-      assert.equal(123, filtered.value1, 'value1 is not integer');
-      assert.equal(2, filtered.value2, 'value2 is not integer');
-      assert.equal(0, filtered.value3, 'value3 is not integer');
-      assert.equal(0, filtered.value4, 'value4 is not integer');
-      assert.equal(0, filtered.value5, 'value5 is not integer');
-      assert.equal(2, filtered.value6, 'value6 is not integer');
-      assert.equal(0, filtered.value7, 'value7 is not integer');
-      assert.equal(0, filtered.value8, 'value8 is not integer');
-      assert.equal(0, filtered.value9, 'value9 is not integer');
-      assert.equal(123, filtered.value10.value1, 'value10.value1 is not integer');
-      assert.equal(123, filtered.value11, 'value11 is not integer');
+      assert.strictEqual(123, filtered.value1, 'value1 is not integer');
+      assert.strictEqual(123, filtered.value2, 'value2 is not integer');
+      assert.strictEqual(0, filtered.value3, 'value3 is not integer');
+      assert.strictEqual(0, filtered.value4, 'value4 is not integer');
+      assert.strictEqual(0, filtered.value5, 'value5 is not integer');
+      assert.strictEqual(2, filtered.value6, 'value6 is not integer');
+      assert.strictEqual(0, filtered.value7, 'value7 is not integer');
+      assert.strictEqual(0, filtered.value8, 'value8 is not integer');
+      assert.strictEqual(0, filtered.value9, 'value9 is not integer');
+      assert.strictEqual(123, filtered.value10.value1, 'value10.value1 is not integer');
+      assert.strictEqual(123, filtered.value11, 'value11 is not integer');
+      assert.strictEqual(0, filtered.value12, 'value12 is not integer');
     });
   });
 
@@ -110,7 +164,7 @@ describe('Filters check', function() {
       var conforma = new Conforma();
       var filtered = conforma.setData({
         value1:'123',
-        value2:2,
+        value2:123,
         value3:true,
         value4:false,
         value5:null,
@@ -132,16 +186,16 @@ describe('Filters check', function() {
         .filter('value10', 'float')
         .getData(true);
 
-      assert.equal(123, filtered.value1, 'value1 is not float');
-      assert.equal(2, filtered.value2, 'value2 is not float');
-      assert.equal(0, filtered.value3, 'value3 is not float');
-      assert.equal(0, filtered.value4, 'value4 is not float');
-      assert.equal(0, filtered.value5, 'value5 is not float');
-      assert.equal(2.51, filtered.value6, 'value6 is not float');
-      assert.equal(0, filtered.value7, 'value7 is not float');
-      assert.equal(0, filtered.value8, 'value8 is not float');
-      assert.equal(0, filtered.value9, 'value9 is not float');
-      assert.equal(1.234, filtered.value10, 'value10 is not float');
+      assert.strictEqual(123, filtered.value1, 'value1 is not float');
+      assert.strictEqual(123, filtered.value2, 'value2 is not float');
+      assert.strictEqual(0, filtered.value3, 'value3 is not float');
+      assert.strictEqual(0, filtered.value4, 'value4 is not float');
+      assert.strictEqual(0, filtered.value5, 'value5 is not float');
+      assert.strictEqual(2.51, filtered.value6, 'value6 is not float');
+      assert.strictEqual(0, filtered.value7, 'value7 is not float');
+      assert.strictEqual(0, filtered.value8, 'value8 is not float');
+      assert.strictEqual(0, filtered.value9, 'value9 is not float');
+      assert.strictEqual(1.234, filtered.value10, 'value10 is not float');
     });
   });
 
@@ -237,7 +291,7 @@ describe('Filters check', function() {
   });
 
   describe('stringLength', function() {
-    it('should max size', function() {
+    it('should allowed length', function() {
       var conforma = new Conforma();
       var filtered = conforma.setData({
         value1: 'String length without max param.',
