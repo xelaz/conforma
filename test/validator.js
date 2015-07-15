@@ -16,7 +16,7 @@ describe('Conforma.validate args check', function() {
       .validate('value1', 'alpha')
       .validate('value2', ['alpha', 'alnum'])
       .validate('value3', function(field, value) {
-        return new conforma.ConformaError(field, 'message', value);
+        return new conforma.ConformaValidationError(field, 'message', value);
       })
       .validate('value4', 'unknown')
       .validate('value5', ['required', 'notEmpty'])
