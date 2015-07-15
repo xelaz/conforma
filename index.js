@@ -6,7 +6,8 @@ var util = require('util'),
   _extend = require('node.extend'),
   _filter = require('./lib/filter'),
   _validator = require('./lib/validator'),
-  _error = require('./lib/error');
+  ConformaError = require('./lib/error').ConformaError,
+  ConformaValidationError = require('./lib/error').ConformaValidationError;
 
 var Conforma = function(data) {
   this._filter    = [];
@@ -228,9 +229,7 @@ Conforma.prototype.exec = function(done) {
     });
 
     if(newErrors.length) {
-      var nErr = new Error('ConformaValidationError');
-      nErr.errors = newErrors;
-      throw nErr;
+      throw new ConformaError('You have an error on validate data', newErrors);
     } else {
       return _self.getData();
     }
@@ -272,5 +271,6 @@ module.exports.Conforma = Conforma;
 module.exports.ConformaFilter = _filter;
 
 /** @type {ConformaError} */
-module.exports.ConformaError = _error;
+module.exports.ConformaError = ConformaError;
+module.exports.ConformaValidationError = ConformaValidationError;
 module.exports.conform = conform;

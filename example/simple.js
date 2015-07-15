@@ -20,12 +20,12 @@ formData.setData({
     value3: '   <html>Hello World!</html>'
   }
 }).conform({
-  value1: true,
-  value2: true,
+  value1: undefined,
+  value2: undefined,
   nested: {
-    value1: true,
-    value2: true,
-    value3: true
+    value1: undefined,
+    value2: undefined,
+    value3: undefined
   }
 })
   .filter('value1', 'int')

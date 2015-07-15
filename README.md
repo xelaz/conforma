@@ -28,12 +28,12 @@ More examples you can find in example path or in test.
         value3: '   <html>Hello World!</html>'
       }
     }).conform({
-      value1: true,
-      value2: true,
+      value1: undefined,
+      value2: undefined,
       nested: {
-        value1: true,
-        value2: true,
-        value3: true
+        value1: undefined,
+        value2: undefined,
+        value3: undefined
       }
     })
       .filter('value1', 'int')
@@ -82,6 +82,50 @@ If your data is valid, then you get the filtered and validated data:
        } 
     }
 ```
+
+### Use with Promise
+
+```javascript
+    var conforma = require('conforma');
+    var formData = new conforma.Conforma();
+    
+    formData.setData({
+      value1: '123',
+      value2: 'yes'
+    })
+      .filter('value1', 'int')
+      .filter('value2', 'bool')
+      .exec()
+      .then(function(data) {
+        // ...
+      })
+      .catch(function(error) {
+        // ...
+      });
+```
+
+### Use with your local filter/validator
+
+```javascript
+
+    var conforma = require('conforma');
+    var formData = new conforma.Conforma();
+    
+    formData.setData({
+      value1: '123',
+      value2: 'yes'
+    })
+      .filter('value1', 'int')
+      .filter('value2', 'bool')
+      .exec()
+      .then(function(data) {
+        // ...
+      })
+      .catch(function(error) {
+        // ...
+      });
+```
+
 
 ## API
 * .setData(object)
