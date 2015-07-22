@@ -220,20 +220,23 @@ Conforma.prototype.exec = function(done) {
     }
   }
 
-  return Promise.all(sync).then(function(err) {
-    var errors = err || [],
-      newErrors = [];
+  return Promise.all(sync)
+    .bind(_self)
+    .then(function(err) {
+      var errors = err || [],
+        newErrors = [];
 
-    errors.forEach(function(err) {
-      err && newErrors.push(err);
-    });
+      errors.forEach(function(err) {
+        err && newErrors.push(err);
+      });
 
-    if(newErrors.length) {
-      throw new ConformaError('You have an error on validate data', newErrors);
-    } else {
-      return _self.getData();
-    }
-  }).nodeify(done);
+      if(newErrors.length) {
+        throw new ConformaError('You have an error on validate data', newErrors);
+      } else {
+        return _self.getData();
+      }
+    })
+    .nodeify(done && done.bind(_self));
 };
 
 /**
