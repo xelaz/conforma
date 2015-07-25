@@ -141,8 +141,8 @@ If your data is valid, then you get the filtered and validated data:
 * bool
 * string
 * trim whitespaces
-* toLowerCase
-* toUpperCase
+* lowerCase
+* upperCase
 * escapeHtml (<>"'& to entities)
 * addslashes (like php)
 * stripHtml (sanitize all html content)
@@ -159,6 +159,8 @@ If your data is valid, then you get the filtered and validated data:
 * compare (with other fields)
 * contains
 * isDate (format please use moment)
+* inList
+* length (min, max)
 
 ## TODO
 * extend all tests

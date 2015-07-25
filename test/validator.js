@@ -179,35 +179,24 @@ describe('Validators check', function() {
       conforma.setData({
         value1: 'TEST',
         value2: '',
-        value4: {
-          child1: 'TEST',
-          child2: ''
-        },
-        value5: 0,
-        value6: '0',
-        value7: false,
-        value8: null
+        value3: [],
+        value4: 0,
+        value5: '0',
+        value6: false,
+        value7: null
       })
         .validate('value1', 'notEmpty')
         .validate('value2', 'notEmpty')
         .validate('value3', 'notEmpty')
+        .validate('value4', 'notEmpty')
         .validate('value5', 'notEmpty')
         .validate('value6', 'notEmpty')
         .validate('value7', 'notEmpty')
         .validate('value8', 'notEmpty')
-        .validate('value4.child1', 'notEmpty')
-        .validate('value4.child2', 'notEmpty')
-        .validate('value4.child3', 'notEmpty')
         .exec()
         .catch(function(err) {
           var errors = err.errors;
-
-          var err1 = errors.shift();
-          assert.equal(err1.field, 'value2');
-
-          var err2 = errors.shift();
-          assert.equal(err2.field, 'value4.child2');
-
+          assert.equal(6, errors.length, 'notEmpty is not compatible');
           done();
         });
     });
@@ -215,7 +204,6 @@ describe('Validators check', function() {
 
   describe('email', function() {
     it('should be error on wrong email address', function (done) {
-      this.timeout(5000);
 
       var conforma = new Conforma();
       conforma.setData({
@@ -450,6 +438,83 @@ describe('Validators check', function() {
         .exec()
         .catch(function(err) {
           assert.equal('date2', err.errors[0].field);
+          done();
+        });
+    });
+  });
+
+  describe('inList', function() {
+    it('value must available in list', function (done) {
+      Conforma({
+        value1: '123',
+        value2: 123,
+        value3: 'TESTstring',
+        value4: null,
+        value5: false
+      })
+        .validate('value1', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value2', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value3', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value4', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value5', {inList: ['123', 123, 'TESTstring', null, false]})
+        .exec()
+        .then(function(data) {
+          done();
+        });
+    });
+
+    it('value must not available in list', function (done) {
+      Conforma({
+        value1: '1234',
+        value2: 1234,
+        value3: 'TESTstringe',
+        value4: true,
+        value5: undefined
+      })
+        .validate('value1', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value2', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value3', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value4', {inList: ['123', 123, 'TESTstring', null, false]})
+        .validate('value5', {inList: ['123', 123, 'TESTstring', null, false]})
+        .exec()
+        .catch(function(err) {
+          assert.equal(5, err.errors.length, 'some get wrong');
+          done();
+        });
+    });
+  });
+
+  describe('length', function() {
+    it('must not passed', function (done) {
+      Conforma({
+        value1: 'Lorem',
+        value2: 'Lorem ipsum dolor sit amet',
+        value3: 'Lorem'
+      })
+        .validate('value1', {length: {min: 6}})
+        .validate('value2', {length: {max: 25}})
+        .exec()
+        .catch(function(err) {
+          assert.equal(2, err.errors.length, 'min/max is not okay');
+          done();
+        });
+    });
+
+    it('must passed', function (done) {
+      Conforma({
+        value1: 'Lorem ipsum dolor sit amet',
+        value2: 'Lorem ipsum dolor sit amet',
+        value3: 'Lorem'
+      })
+        .validate('value1', {length: {min: 5}})
+        .validate('value2', {length: {max: 26}})
+        .validate('value3', {length: {min: 2, max: 5}})
+        .exec()
+        .then(function(data) {
+          done();
+        })
+        .catch(function(err) {
+          //console.log('ERR', err);
           done();
         });
     });

@@ -9,17 +9,62 @@ var util = require('util'),
   ConformaError = require('./lib/error').ConformaError,
   ConformaValidationError = require('./lib/error').ConformaValidationError;
 
+/**
+ * @typedef {Conforma} Conforma
+ * @class
+ * @constructor
+ *
+ * @param {object}     [data]
+ *
+ * @property {Array}   _filter
+ * @property {Array}   _validator
+ * @property {Array}   _required
+ * @property {Object}  _data
+ *
+ * @returns {Conforma}
+ */
 var Conforma = function(data) {
+  if (!(this instanceof Conforma)){
+    return new Conforma(data);
+  }
+
+  return this.reset().setData(data);
+};
+
+/**
+ * @returns {Conforma}
+ */
+Conforma.prototype.reset = function() {
+  /**
+   * @type {Array}
+   * @private
+   */
   this._filter    = [];
+
+  /**
+   * @type {Array}
+   * @private
+   */
   this._validator = [];
+
+  /**
+   * @type {Array}
+   * @private
+   */
   this._required  = [];
+
+  /**
+   * @type {{}}
+   * @private
+   */
   this._data      = {};
 
-  this.setData(data);
+  return this;
 };
 
 /**
  * @param {object} data
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.setData = function(data) {
@@ -133,7 +178,6 @@ Conforma.prototype.validate = function(field, validator) {
 };
 
 /**
- *
  * @param {string} field
  * @param {string} key
  *
@@ -227,7 +271,9 @@ Conforma.prototype.exec = function(done) {
         newErrors = [];
 
       errors.forEach(function(err) {
-        err && newErrors.push(err);
+        if(err) {
+          newErrors = newErrors.concat(err);
+        }
       });
 
       if(newErrors.length) {
@@ -237,18 +283,6 @@ Conforma.prototype.exec = function(done) {
       }
     })
     .nodeify(done && done.bind(_self));
-};
-
-/**
- * @returns {Conforma}
- */
-Conforma.prototype.reset = function() {
-  this._filter    = [];
-  this._validator = [];
-  this._required  = [];
-  this._data      = {};
-
-  return this;
 };
 
 /**
@@ -270,10 +304,25 @@ function conform(needed, obj) {
   return needed;
 }
 
+/**
+ * @type {Conforma}
+ */
 module.exports.Conforma = Conforma;
+
+/**
+ * @type {ConformaFilter}
+ */
 module.exports.ConformaFilter = _filter;
 
 /** @type {ConformaError} */
 module.exports.ConformaError = ConformaError;
+
+/**
+ * @type {ConformaValidationError}
+ */
 module.exports.ConformaValidationError = ConformaValidationError;
+
+/**
+ * @type {function}
+ */
 module.exports.conform = conform;

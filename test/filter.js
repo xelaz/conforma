@@ -15,14 +15,14 @@ describe('Conforma.filter args check', function() {
       value6: 'TEST'
     })
       .filter('value1', 'string')
-      .filter('value2', ['string', 'toLowerCase'])
+      .filter('value2', ['string', 'lowerCase'])
       .filter('value3', function(value) {
         return value + 'TEST';
       })
       .filter('value4', 'unknown')
-      .filter('value5', ['toLowerCase', 'stringLength', {stringLength: 3}])
+      .filter('value5', ['lowerCase', 'stringLength', {stringLength: 3}])
       .filter('value6', {stringLength: 2})
-      .filter('value7', ['string', 'toLowerCase'])
+      .filter('value7', ['string', 'lowerCase'])
       .getData(true);
 
     assert.strictEqual('123', filteredData.value1, 'value1');
@@ -221,6 +221,7 @@ describe('Filters check', function() {
   describe('bool', function() {
     it('value must be boolean', function() {
       var conforma = new Conforma();
+      /** @type {Conforma} */
       var filtered = conforma.setData({
         value1:'YES',
         value2:'yes',
@@ -237,7 +238,6 @@ describe('Filters check', function() {
         value13:' ',
         value14:'',
         value15:'abc'
-
       })
         .filter('value1', 'bool')
         .filter('value2', 'bool')
@@ -276,10 +276,9 @@ describe('Filters check', function() {
 
   describe('email', function() {
     it('should normalize email', function() {
-      var conforma = new Conforma();
-      var filtered = conforma.setData({
-        value1:'TEST@maIL.Com',
-        value2:'email+12345-!§$%&@this is host,.com'
+      var filtered = Conforma({
+        value1: 'TEST@maIL.Com',
+        value2: 'email+12345-!§$%&@this is host,.com'
       })
         .filter('value1', 'email')
         .filter('value2', 'email')
@@ -292,8 +291,7 @@ describe('Filters check', function() {
 
   describe('stringLength', function() {
     it('should allowed length', function() {
-      var conforma = new Conforma();
-      var filtered = conforma.setData({
+      var filtered = Conforma({
         value1: 'String length without max param.',
         value2:'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonümy eirmod tempor invidunt ut '
               +'labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores '
@@ -305,6 +303,69 @@ describe('Filters check', function() {
 
       assert.equal(32, filtered.value1.length, 'value1 is not same length');
       assert.equal(128, filtered.value2.length, 'value2 is not same length');
+    });
+  });
+
+  describe('lowerCase', function() {
+    it('value must be in lower case', function() {
+      var filtered = Conforma({
+        value1:'LoreM IpsuM'
+      })
+        .filter('value1', 'lowerCase')
+        .getData(true);
+
+      assert.equal('lorem ipsum', filtered.value1, 'value1 is not lower case sesitive');
+    });
+  });
+
+  describe('upperCase', function() {
+    it('value must be in upper case', function() {
+      var filtered = Conforma({
+        value1:'lorem IpsuM'
+      })
+        .filter('value1', 'upperCase')
+        .getData(true);
+
+      assert.equal('LOREM IPSUM', filtered.value1, 'value1 is not upper case sesitive');
+    });
+  });
+
+  describe('string', function() {
+    it('value must be a string', function() {
+      var filtered = Conforma({
+        value1: 'STRING',
+        value2: 12345,
+        value3: null,
+        value4: undefined,
+        value5: [1,2,3],
+        value6: false,
+        value7: {test: 1, test2: 'test'},
+        value8: {},
+        value9: function() {},
+        value10: []
+      })
+        .filter('value1', 'string')
+        .filter('value2', 'string')
+        .filter('value3', 'string')
+        .filter('value4', 'string')
+        .filter('value5', 'string')
+        .filter('value6', 'string')
+        .filter('value7', 'string')
+        .filter('value8', 'string')
+        .filter('value9', 'string')
+        .filter('value10', 'string')
+        .getData(true);
+
+      assert.strictEqual('STRING', filtered.value1, 'value1 is not string');
+      assert.strictEqual('12345', filtered.value2, 'value2 is not string');
+      assert.strictEqual('', filtered.value3, 'value3 is not string');
+      assert.strictEqual('', filtered.value4, 'value4 is not string');
+      assert.strictEqual('1,2,3', filtered.value5, 'value5 is not string');
+      assert.strictEqual('false', filtered.value6, 'value6 is not string');
+      assert.strictEqual('[object Object]', filtered.value7, 'value7 is not string');
+      assert.strictEqual('[object Object]', filtered.value8, 'value8 is not string');
+      assert.strictEqual('', filtered.value9, 'value9 is not string');
+      assert.strictEqual('', filtered.value10, 'value10 is not string');
     });
   });
 });
