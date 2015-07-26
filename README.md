@@ -128,12 +128,14 @@ If your data is valid, then you get the filtered and validated data:
 
 
 ## API
-* .setData(object)
-* .getData(filtered)
-* .filter(key, filter)
-* .validate(key, validator)
-* .exec(callback) return Promise
-* .reset
+* setData(object)
+* getData(filtered)
+* filter(path, filter)
+* validate(path, validator)
+* move(srcPath, destPath)
+* remove(path)
+* exec(callback) return Promise
+* reset
 
 ## Filter
 * int

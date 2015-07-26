@@ -14,7 +14,7 @@ var util = require('util'),
  * @class
  * @constructor
  *
- * @param {object}     [data]
+ * @param {Object}     [data]
  *
  * @property {Array}   _filter
  * @property {Array}   _validator
@@ -63,7 +63,54 @@ Conforma.prototype.reset = function() {
 };
 
 /**
- * @param {object} data
+ * @param {String} srcPath
+ * @param {String} [destPath] - if it is empty then move to root node
+ *
+ * @returns {Conforma}
+ */
+Conforma.prototype.move = function(srcPath, destPath) {
+  var data = mpath.get(srcPath, this._data);
+  var tmpData = this._data;
+
+  if(srcPath && destPath && mpath.get(destPath, this._data)) {
+    mpath.set(destPath, mpath.get(srcPath, this._data), this._data);
+  } else if(srcPath && destPath) {
+    var nodePath = destPath.split('.');
+    var last = nodePath.pop();
+
+    nodePath.forEach(function(path) {
+      tmpData[path] = tmpData[path] || {};
+      tmpData = tmpData[path];
+    });
+    tmpData[last] = data;
+  } else if(srcPath && !destPath) {
+    _extend(this._data, data);
+  }
+
+  return this.remove(srcPath);
+};
+
+/**
+ * @param srcPath
+ *
+ * @returns {Conforma}
+ */
+Conforma.prototype.remove = function(srcPath) {
+  var path = srcPath.split('.');
+  var last = path.pop();
+  var data = this._data;
+
+  path.forEach(function(path) {
+    data = data[path];
+  });
+
+  delete data[last];
+
+  return this;
+};
+
+/**
+ * @param {Object} data
  *
  * @returns {Conforma}
  */
@@ -77,7 +124,7 @@ Conforma.prototype.setData = function(data) {
  * without start exec you get can get filtered or raw data,
  * after exec you get only filtered data
  *
- * @param {bool} [clean] - get clean or raw data
+ * @param {Boolean} [clean] - get clean or raw data
  *
  * @returns {{}|*}
  */
@@ -90,7 +137,7 @@ Conforma.prototype.getData = function(clean) {
 };
 
 /**
- * @param {string} field - get field value
+ * @param {String} field - get field value
  *
  * @returns {*|undefined}
  */
@@ -122,8 +169,8 @@ Conforma.prototype.conform = function(value) {
 
 /**
  *
- * @param {string}              field
- * @param {string|array|object} filter
+ * @param {String}              field
+ * @param {String|Array|Object} filter
  *
  * @returns {Conforma}
  */
@@ -150,7 +197,7 @@ Conforma.prototype.filter = function(field, filter) {
 };
 
 /**
- * @param {string}              field
+ * @param {String}              field
  * @param {string|array|object} validator
  *
  * @returns {Conforma}
@@ -178,8 +225,8 @@ Conforma.prototype.validate = function(field, validator) {
 };
 
 /**
- * @param {string} field
- * @param {string} key
+ * @param {String} field
+ * @param {String} key
  *
  * @private
  */

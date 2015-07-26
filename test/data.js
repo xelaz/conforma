@@ -106,4 +106,39 @@ describe('Data', function() {
       assert.equal(null, data.parent.child3);
     });
   });
+
+
+  describe('move', function() {
+
+    it('must src node to dest node and remove src node', function() {
+      var data = Conforma({
+          node1: {
+            data: [1,2,3]
+          },
+          node2: {},
+          node3: {
+            child1: 1,
+            child2: {
+              bigNode: 123,
+              maxDode: 234
+            }
+          },
+          node: {
+            test: 'TEST'
+          }
+        })
+        .move('node1.data', 'node2')
+        .move('node', 'node4.child.sub')
+        .move('node3.child2')
+        .getData();
+
+      assert.equal(0, Object.keys(data.node1).length);
+      assert.ok(Array.isArray(data.node2));
+      assert.equal(1, data.node3.child1);
+      assert.equal('TEST', data.node4.child.sub.test);
+      assert.equal(123, data.bigNode);
+      assert.equal(234, data.maxDode);
+      assert.equal('undefined', typeof data.node);
+    });
+  });
 });
