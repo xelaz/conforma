@@ -278,14 +278,17 @@ describe('Filters check', function() {
     it('should normalize email', function() {
       var filtered = Conforma({
         value1: 'TEST@maIL.Com',
-        value2: 'email+12345-!§$%&@this is host,.com'
+        value2: '!§$%&email+12345-!§$%&@this is host,.com',
+        value3: '!§$%&üm-äil.12345-all@googlemail.com'
       })
         .filter('value1', 'email')
         .filter('value2', 'email')
+        .filter('value3', 'email')
         .getData(true);
 
       assert.equal('test@mail.com', filtered.value1, 'value1 is not valid mail');
-      assert.equal('email12345@thisishost.com', filtered.value2, 'value2 is not valid mail');
+      assert.equal('email12345-@thisishost.com', filtered.value2, 'value2 is not valid mail');
+      assert.equal('üm-äil.12345-all@gmail.com', filtered.value3, 'value3 is not valid mail');
     });
   });
 
