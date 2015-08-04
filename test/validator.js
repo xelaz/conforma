@@ -500,7 +500,7 @@ describe('Validators check', function() {
         });
     });
 
-    it('must passed', function (done) {
+    /*it('must passed', function (done) {
       Conforma({
         value1: 'Lorem ipsum dolor sit amet',
         value2: 'Lorem ipsum dolor sit amet',
@@ -511,13 +511,14 @@ describe('Validators check', function() {
         .validate('value3', {length: {min: 2, max: 5}})
         .exec()
         .then(function(data) {
+          console.log('MMMMMMMMMM', data);
           done();
         })
         .catch(function(err) {
-          //console.log('ERR', err);
+          console.log('ERR', err);
           done();
         });
-    });
+    });*/
   });
 
 });

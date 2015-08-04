@@ -59,6 +59,13 @@ Conforma.prototype.reset = function() {
    */
   this._data      = {};
 
+  /**
+   *
+   * @type {null}
+   * @private
+   */
+  this._namespace = null;
+
   return this;
 };
 
@@ -300,12 +307,13 @@ Conforma.prototype.exec = function(done) {
   for(var field in this._validator) {
     if(this._validator.hasOwnProperty(field)) {
       val = this.getValue(field);
+      var extendedFiled = _self._namespace ? [_self._namespace, field].join('.') : field;
 
       if(field in _self._required && val === undefined) {
-        sync.push(Promise.try(_validator.required(), [field, val], _self));
+        sync.push(Promise.try(_validator.required(), [extendedFiled, val], _self));
       } else {
         _self._validator[field].forEach(function(f) {
-          sync.push(Promise.try(f, [field, val], _self));
+          sync.push(Promise.try(f, [extendedFiled, val], _self));
         });
       }
     }
@@ -315,21 +323,86 @@ Conforma.prototype.exec = function(done) {
     .bind(_self)
     .then(function(err) {
       var errors = err || [],
-        newErrors = [];
+        newErrors = [],
+        newData =  [],
+        normalizedData = [];
 
       errors.forEach(function(err) {
-        if(err) {
-          newErrors = newErrors.concat(err);
+        if(err instanceof ConformaError) {
+          err.errors.forEach(function(data) {
+            normalizedData.push(data)
+          });
+        } else if(err instanceof ConformaValidationError) {
+          normalizedData.push(err);
+        } else if(err) {
+          normalizedData.push(err);
         }
       });
 
+      normalizedData.forEach(function(err) {
+        if(err instanceof ConformaError) {
+          newErrors = newErrors.concat(err.errors);
+        } else if(err instanceof ConformaValidationError) {
+          newErrors = newErrors.concat(err);
+        } else if(err) {
+          newData.push(err);
+        }
+      });
+
+      if(newData.length) {
+        newData.forEach(function(data) {
+          _self.setData(data);
+        });
+      }
+
       if(newErrors.length) {
         throw new ConformaError('You have an error on validate data', newErrors);
-      } else {
-        return _self.getData();
       }
+
+      return _self.getData();
     })
     .nodeify(done && done.bind(_self));
+};
+
+/**
+ * @return {Promise}
+ */
+Conforma.prototype.mount = function() {
+  var _this = this;
+  return this.exec().then(function(data) {
+    if(_this._namespace) {
+      var o = {};
+      // TODO: complexe nestings
+      o[_this._namespace] = _this.getData();
+      return o;
+    } else {
+      return _this.getData();
+    }
+  }).catch(ConformaError, function(err) {
+
+    if(_this._namespace) {
+      var o = {};
+      o[_this._namespace] = _this.getData();
+      err.errors.push(o);
+    } else {
+      err.errors.push(_this.getData());
+    }
+
+    // prevent throwing error
+    return err;
+  });
+};
+
+/**
+ * for mount conformas
+ *
+ * @param namespace
+ * @return {Conforma}
+ */
+Conforma.prototype.namespace = function(namespace) {
+  this._namespace = namespace;
+
+  return this;
 };
 
 /**
