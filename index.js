@@ -332,8 +332,6 @@ Conforma.prototype.exec = function(done) {
           err.errors.forEach(function(data) {
             normalizedData.push(data)
           });
-        } else if(err instanceof ConformaValidationError) {
-          normalizedData.push(err);
         } else if(err) {
           normalizedData.push(err);
         }

@@ -485,7 +485,7 @@ describe('Validators check', function() {
   });
 
   describe('length', function() {
-    it('must not passed', function (done) {
+    it('should not passed', function (done) {
       Conforma({
         value1: 'Lorem',
         value2: 'Lorem ipsum dolor sit amet',
@@ -493,6 +493,7 @@ describe('Validators check', function() {
       })
         .validate('value1', {length: {min: 6}})
         .validate('value2', {length: {max: 25}})
+        .validate('value3', {length: {min: 5, max: 5}})
         .exec()
         .catch(function(err) {
           assert.equal(2, err.errors.length, 'min/max is not okay');
@@ -500,7 +501,7 @@ describe('Validators check', function() {
         });
     });
 
-    /*it('must passed', function (done) {
+    it('should passed at least', function (done) {
       Conforma({
         value1: 'Lorem ipsum dolor sit amet',
         value2: 'Lorem ipsum dolor sit amet',
@@ -511,14 +512,13 @@ describe('Validators check', function() {
         .validate('value3', {length: {min: 2, max: 5}})
         .exec()
         .then(function(data) {
-          console.log('MMMMMMMMMM', data);
+          assert.ok(true);
           done();
         })
         .catch(function(err) {
-          console.log('ERR', err);
-          done();
+          assert.ok(false);
         });
-    });*/
+    });
   });
 
 });

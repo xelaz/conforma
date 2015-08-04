@@ -3,11 +3,35 @@
 var assert = require("assert"),
   Conforma = require('../index').Conforma;
 
-describe('Concate Conforma', function() {
+describe('Mount Conforma', function() {
 
-  it('set default data then main data', function() {
+  it('should return errors with namespace name', function() {
     var conforma = new Conforma();
-    var data = conforma
+    conforma
+      .namespace('user')
+      .setData({
+        name: 'Alexander',
+        description: 2,
+        address: {
+          city: 'Gießen',
+          zip: 12345,
+          street: null
+        }
+      })
+      .validate('description', 'alpha')
+      .exec()
+      .then(function() {
+        assert.ok(false);
+      })
+      .catch(function(err) {
+        assert.equal(1, err.errors.length, 'must have 1 errors');
+        assert.equal('user.description', err.errors[0].field, 'must contain namespace errors');
+      });
+  });
+
+  it('should mount conformas and return joint errors', function() {
+    var conforma = new Conforma();
+    conforma
       .setData({
         name: 'Alexander',
         description: 2,
@@ -19,49 +43,26 @@ describe('Concate Conforma', function() {
       })
       .validate('description', 'alpha')
       .validate('address', function(field, value) {
-        console.log('ValidateAddress: ', field, value);
-
         var addressConforma = Conforma(value);
-        addressConforma
+        return addressConforma
           .namespace(field)
           .filter('city', 'upperCase')
           .validate('street', 'notEmpty')
-          .validate('city', ['required']);
-
-        return addressConforma.mount();
+          .validate('city', ['required'])
+          .mount();
       })
       .exec()
-      .then(function(data) {
+      .then(function() {
         assert.ok(false);
       })
       .catch(function(err) {
-        console.log('1ERRRR::' , err, '-_---:.-_-.-,----', this.getData());
+        assert.equal(2, err.errors.length, 'must have 2 errors');
+        var data = this.getData();
+        assert.equal('GIESSEN', data.address.city);
       });
   });
 
-  it('set default data then main data', function() {
-    var conforma = new Conforma();
-    var data = conforma
-      .setData({
-        name: 'Alexander',
-        description: 2,
-        address: {
-          city: 'Gießen',
-          zip: 12345,
-          street: null
-        }
-      })
-      .validate('description', 'alpha')
-      .exec()
-      .then(function(data) {
-        assert.ok(false);
-      })
-      .catch(function(err) {
-        console.log('2ERRRR::' , err, '-_---:.-_-.-,----', this.getData());
-      });
-  });
-
-  it('set default data then main data', function() {
+  it('should mounted data be filtered', function() {
     var conforma = new Conforma();
     var data = conforma
       .setData({
@@ -75,8 +76,6 @@ describe('Concate Conforma', function() {
       })
       .validate('description', 'alpha')
       .validate('address', function(field, value) {
-        console.log('ValidateAddress: ', field, value);
-
         var addressConforma = Conforma(value);
         addressConforma
           .namespace(field)
@@ -87,8 +86,11 @@ describe('Concate Conforma', function() {
         return addressConforma.mount();
       })
       .exec()
+      .catch(function() {
+        assert.ok(false);
+      })
       .then(function(data) {
-        console.log('DATAS:', data);
+        assert.equal('GIESSEN', data.address.city);
       });
   });
 });
