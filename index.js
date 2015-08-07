@@ -268,6 +268,7 @@ Conforma.prototype._applyValidator = function (field, key) {
  */
 Conforma.prototype._runFilter = function() {
   var fieldValue;
+  var _this = this;
 
   for(var field in this._filter) {
     if(this._filter.hasOwnProperty(field)) {
@@ -275,14 +276,14 @@ Conforma.prototype._runFilter = function() {
 
       this._filter[field].forEach(function (filter) {
         if (typeof filter === 'function') {
-          fieldValue = filter.call(_filter, fieldValue);
+          fieldValue = filter.call(_this, fieldValue);
         } else if (typeof filter === 'string' && filter in _filter) {
-          fieldValue = _filter[filter].call(_filter, fieldValue);
+          fieldValue = _filter[filter].call(_this, fieldValue);
         } else if(typeof filter === 'object') {
           var fName = Object.keys(filter).pop() || null;
 
           if(fName && fName in _filter) {
-            fieldValue = _filter[fName].call(_filter, fieldValue, filter[fName]);
+            fieldValue = _filter[fName].call(_this, fieldValue, filter[fName]);
           }
         }
       });
