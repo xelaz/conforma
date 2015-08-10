@@ -166,9 +166,15 @@ Conforma.prototype.default = function(value) {
 /**
  * @param {*} value
  *
+ * @throws Error
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.conform = function(value) {
+  if(!value) {
+    throw new Error('conform empty value');
+  }
+
   this._data = conform(value, this._data);
 
   return this;
