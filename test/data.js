@@ -141,4 +141,53 @@ describe('Data', function() {
       assert.equal('undefined', typeof data.node);
     });
   });
+
+  describe('overwrite', function() {
+    it('should not overwrite conform data', function () {
+      var conform = {
+        test: 111,
+        sub: {
+          numbers: 111
+        }
+      };
+
+      var cnf = Conforma({
+        test: 222,
+        sub: {
+          numbers: 222
+        }
+      }).conform(conform);
+
+      var ndata = cnf.getData();
+
+      assert.equal(111, conform.test);
+      assert.equal(111, conform.sub.numbers);
+      assert.equal(222, ndata.test);
+      assert.equal(222, ndata.sub.numbers);
+    });
+
+    it('should not overwrite data', function () {
+      var cnf = Conforma({
+        test: 222,
+        sub: {
+          numbers: 222
+        }
+      });
+
+      var ndata = cnf.getData();
+
+      assert.equal(222, ndata.test);
+      assert.equal(222, ndata.sub.numbers);
+
+      ndata.test = 333;
+      ndata.sub.numbers = 333;
+
+      var ndata2 = cnf.getData();
+
+      assert.equal(333, ndata.test);
+      assert.equal(333, ndata.sub.numbers);
+      assert.equal(222, ndata2.test);
+      assert.equal(222, ndata2.sub.numbers);
+    });
+  });
 });

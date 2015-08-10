@@ -140,7 +140,7 @@ Conforma.prototype.getData = function(clean) {
     this._runFilter();
   }
 
-  return this._data;
+  return _extend(true, {}, this._data);
 };
 
 /**
@@ -410,6 +410,8 @@ Conforma.prototype.namespace = function(namespace) {
  * @returns {*}
  */
 function conform(needed, obj) {
+  needed = _extend({}, needed);
+
   Object.keys(needed).forEach(function(key) {
     var v = obj.hasOwnProperty(key) ? obj[key] : false;
 
@@ -419,6 +421,7 @@ function conform(needed, obj) {
       needed[key] = v;
     }
   });
+
   return needed;
 }
 
