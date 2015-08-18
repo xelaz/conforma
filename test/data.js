@@ -99,40 +99,40 @@ describe('Data', function() {
 
   describe('conform', function() {
 
-    it('must contain only conformed data structure', function() {
+    it('must contain only conformed data structure', function () {
       var data = Conforma({
-          child: 1,
-          next: 2,
-          parent: {
-            child1: '4',
-            child2: 22
-          },
-          foo: 'bar',
+        child:  1,
+        next:   2,
+        parent: {
+          child1: '4',
+          child2: 22
+        },
+        foo:    'bar',
 
-          fun2: function() {
-            console.log('fun');
-          }
-        })
+        fun2: function () {
+          console.log('fun');
+        }
+      })
         .conform({
-          child: undefined,
+          child:  undefined,
           parent: {
             child1: undefined,
             child3: undefined
           },
 
-          fun: function() {
+          fun: function () {
             console.log('fun');
           }
         })
         .getData();
 
       assert.equal(1, data.child);
+      assert.equal('4', data.parent.child1);
       assert.equal('undefined', typeof data.next, 'data.next must be undefined');
       assert.equal('undefined', typeof data.parent.child2, 'data.parent.child2 must be undefined');
       assert.equal(undefined, data.parent.child3);
     });
   });
-
 
   describe('move', function() {
 
@@ -186,10 +186,15 @@ describe('Data', function() {
 
       var ndata = cnf.getData();
 
-      assert.equal(111, conform.test);
-      assert.equal(111, conform.sub.numbers);
+
       assert.equal(222, ndata.test);
       assert.equal(222, ndata.sub.numbers);
+
+      ndata.test = 555;
+      ndata.sub.numbers = 555;
+
+      assert.equal(111, conform.test);
+      assert.equal(111, conform.sub.numbers);
     });
 
     it('should not overwrite data', function () {

@@ -411,54 +411,29 @@ Conforma.prototype.namespace = function(namespace) {
 };
 
 /**
- * @param {*} obj
- * @param {*} needed
+ * @param {*} src
+ * @param {*} conf
  *
  * @returns {*}
  */
-function conform(obj, needed) {
-  obj = _extend(true, {}, obj);
+function conform(src, conf) {
+  var dest = {};
 
-  function remove(obj, needed) {
-    Object.keys(obj).forEach(function(key) {
-      var check = false;
-
-      if(Array.isArray(obj)) {
-        check = obj.indexOf(key) > -1;
+  var rec = function(dest, src, conf) {
+    Object.keys(conf).forEach(function(key) {
+      if((typeof conf[key] === 'object' && !Array.isArray(conf[key]))) {
+        dest[key] = rec({}, src[key] || {}, conf[key]);
+      } else if(typeof conf[key] === 'object' && Array.isArray(conf[key])) {
+        dest[key] = conf[key];
       } else {
-        check = Object.prototype.hasOwnProperty.call(needed, key);
-      }
-
-      if(check) {
-        if(!Array.isArray(obj[key]) && typeof obj[key] === 'object') {
-          obj[key] = remove(obj[key], needed[key]);
-        }
-      } else {
-        obj[key] = null;
-        delete obj[key];
+        dest[key] = src[key] || conf[key];
       }
     });
 
-    return obj;
-  }
+    return dest;
+  };
 
-  function extend(obj, needed) {
-    Object.keys(needed).forEach(function(key) {
-      var check = Object.prototype.hasOwnProperty.call(obj, key);
-
-      if(Array.isArray(needed[key])) {
-        obj[key] = extend(obj[key] || [], needed[key]);
-      } else if(typeof needed[key] === 'object') {
-        obj[key] = extend(obj[key] || {}, needed[key]);
-      } else if(!check) {
-        obj[key] = needed[key];
-      }
-    });
-
-    return obj;
-  }
-
-  return extend(remove(obj, needed), needed);
+  return rec(dest, src, conf);
 }
 
 /**
