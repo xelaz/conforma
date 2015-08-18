@@ -173,3 +173,4 @@ If your data is valid, then you get the filtered and validated data:
 * i18n error messages
 * bug fixing
 
+[![Build Status](https://travis-ci.org/xelaz/conforma.svg?branch=master)](https://travis-ci.org/xelaz/conforma)
