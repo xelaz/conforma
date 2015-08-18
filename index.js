@@ -175,7 +175,7 @@ Conforma.prototype.conform = function(value) {
     throw new Error('conform empty value');
   }
 
-  this._data = conform(value, this._data);
+  this._data = conform(this._data, value);
 
   return this;
 };
@@ -411,25 +411,54 @@ Conforma.prototype.namespace = function(namespace) {
 };
 
 /**
- * @param {*} needed
  * @param {*} obj
+ * @param {*} needed
  *
  * @returns {*}
  */
-function conform(needed, obj) {
-  needed = _extend({}, needed);
+function conform(obj, needed) {
+  obj = _extend(true, {}, obj);
 
-  Object.keys(needed).forEach(function(key) {
-    var v = obj.hasOwnProperty(key) ? obj[key] : false;
+  function remove(obj, needed) {
+    Object.keys(obj).forEach(function(key) {
+      var check = false;
 
-    if(typeof v === 'function' || (v && typeof v === 'object')) {
-      needed[key] = conform(needed[key], obj[key]);
-    } else if(v !== false) {
-      needed[key] = v;
-    }
-  });
+      if(Array.isArray(obj)) {
+        check = obj.indexOf(key) > -1;
+      } else {
+        check = Object.prototype.hasOwnProperty.call(needed, key);
+      }
 
-  return needed;
+      if(check) {
+        if(!Array.isArray(obj[key]) && typeof obj[key] === 'object') {
+          obj[key] = remove(obj[key], needed[key]);
+        }
+      } else {
+        obj[key] = null;
+        delete obj[key];
+      }
+    });
+
+    return obj;
+  }
+
+  function extend(obj, needed) {
+    Object.keys(needed).forEach(function(key) {
+      var check = Object.prototype.hasOwnProperty.call(obj, key);
+
+      if(Array.isArray(needed[key])) {
+        obj[key] = extend(obj[key] || [], needed[key]);
+      } else if(typeof needed[key] === 'object') {
+        obj[key] = extend(obj[key] || {}, needed[key]);
+      } else if(!check) {
+        obj[key] = needed[key];
+      }
+    });
+
+    return obj;
+  }
+
+  return extend(remove(obj, needed), needed);
 }
 
 /**
