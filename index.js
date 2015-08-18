@@ -421,10 +421,16 @@ function conform(obj, needed) {
 
   function remove(obj, needed) {
     Object.keys(obj).forEach(function(key) {
-      var check = Object.prototype.hasOwnProperty.call(needed, key);
+      var check = false;
+
+      if(Array.isArray(obj)) {
+        check = obj.indexOf(key) > -1;
+      } else {
+        check = Object.prototype.hasOwnProperty.call(needed, key);
+      }
 
       if(check) {
-        if(typeof obj[key] === 'object') {
+        if(!Array.isArray(obj[key]) && typeof obj[key] === 'object') {
           obj[key] = remove(obj[key], needed[key]);
         }
       } else {
@@ -440,7 +446,9 @@ function conform(obj, needed) {
     Object.keys(needed).forEach(function(key) {
       var check = Object.prototype.hasOwnProperty.call(obj, key);
 
-      if(typeof needed[key] === 'object') {
+      if(Array.isArray(needed[key])) {
+        obj[key] = extend(obj[key] || [], needed[key]);
+      } else if(typeof needed[key] === 'object') {
         obj[key] = extend(obj[key] || {}, needed[key]);
       } else if(!check) {
         obj[key] = needed[key];
