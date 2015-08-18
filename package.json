@@ -1,10 +1,10 @@
 {
   "name": "conforma",
-  "version": "1.8.4",
+  "version": "1.9.0",
   "description": "simple form data filter and validator",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
