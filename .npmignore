@@ -59,3 +59,4 @@ nbproject
 atlassian-ide-plugin.xml
 config.gypi
 *-test.js
+.travis.yml
