@@ -436,7 +436,21 @@ function conform(obj, needed) {
     return obj;
   }
 
-  return _extend(true, remove(obj, needed), needed);
+  function extend(obj, needed) {
+    Object.keys(needed).forEach(function(key) {
+      var check = Object.prototype.hasOwnProperty.call(obj, key);
+
+      if(typeof needed[key] === 'object') {
+        obj[key] = extend(obj[key] || {}, needed[key]);
+      } else if(!check) {
+        obj[key] = needed[key];
+      }
+    });
+
+    return obj;
+  }
+
+  return extend(remove(obj, needed), needed);
 }
 
 /**

@@ -188,8 +188,8 @@ describe('Data', function() {
 
       assert.equal(111, conform.test);
       assert.equal(111, conform.sub.numbers);
-      assert.equal(111, ndata.test);
-      assert.equal(111, ndata.sub.numbers);
+      assert.equal(222, ndata.test);
+      assert.equal(222, ndata.sub.numbers);
     });
 
     it('should not overwrite data', function () {
