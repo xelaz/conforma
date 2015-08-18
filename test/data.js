@@ -37,6 +37,34 @@ describe('Data', function() {
       assert.equal(3, data.third.length);
     });
 
+    it('set data data without new', function() {
+      var data = Conforma({
+        child: 1,
+        next: 2,
+        parent: {
+          child4:4,
+          child2: 22
+        }
+      }).default({
+          child:2,
+          parent: {
+            child1: 1,
+            child2: '2',
+            child3:3
+          },
+          second: '',
+          third: [1, 2, 3]
+        }).setData()
+        .getData();
+
+      assert.equal(1, data.child);
+      assert.equal(22, data.parent.child2);
+      assert.equal(3, data.parent.child3);
+      assert.equal(2, data.next);
+      assert.equal('', data.second);
+      assert.equal(3, data.third.length);
+    });
+
     it('set main data then default', function() {
       var conforma = new Conforma();
       var data = conforma
@@ -72,9 +100,7 @@ describe('Data', function() {
   describe('conform', function() {
 
     it('must contain only conformed data structure', function() {
-      var conforma = new Conforma();
-      var data = conforma
-        .setData({
+      var data = Conforma({
           child: 1,
           next: 2,
           parent: {
@@ -88,10 +114,10 @@ describe('Data', function() {
           }
         })
         .conform({
-          child: null,
+          child: undefined,
           parent: {
-            child1: 0,
-            child3: null
+            child1: undefined,
+            child3: undefined
           },
 
           fun: function() {
@@ -101,9 +127,9 @@ describe('Data', function() {
         .getData();
 
       assert.equal(1, data.child);
-      assert.equal('undefined', typeof data.next);
-      assert.equal('undefined', typeof data.parent.child2);
-      assert.equal(null, data.parent.child3);
+      assert.equal('undefined', typeof data.next, 'data.next must be undefined');
+      assert.equal('undefined', typeof data.parent.child2, 'data.parent.child2 must be undefined');
+      assert.equal(undefined, data.parent.child3);
     });
   });
 
@@ -162,8 +188,8 @@ describe('Data', function() {
 
       assert.equal(111, conform.test);
       assert.equal(111, conform.sub.numbers);
-      assert.equal(222, ndata.test);
-      assert.equal(222, ndata.sub.numbers);
+      assert.equal(111, ndata.test);
+      assert.equal(111, ndata.sub.numbers);
     });
 
     it('should not overwrite data', function () {

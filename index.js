@@ -166,10 +166,16 @@ Conforma.prototype.default = function(value) {
 /**
  * @param {*} value
  *
+ * @throws Error
+ *
  * @returns {Conforma}
  */
 Conforma.prototype.conform = function(value) {
-  this._data = conform(value, this._data);
+  if(!value) {
+    throw new Error('conform empty value');
+  }
+
+  this._data = conform(this._data, value);
 
   return this;
 };
@@ -268,6 +274,7 @@ Conforma.prototype._applyValidator = function (field, key) {
  */
 Conforma.prototype._runFilter = function() {
   var fieldValue;
+  var _this = this;
 
   for(var field in this._filter) {
     if(this._filter.hasOwnProperty(field)) {
@@ -275,14 +282,14 @@ Conforma.prototype._runFilter = function() {
 
       this._filter[field].forEach(function (filter) {
         if (typeof filter === 'function') {
-          fieldValue = filter.call(_filter, fieldValue);
+          fieldValue = filter.call(_this, fieldValue);
         } else if (typeof filter === 'string' && filter in _filter) {
-          fieldValue = _filter[filter].call(_filter, fieldValue);
+          fieldValue = _filter[filter].call(_this, fieldValue);
         } else if(typeof filter === 'object') {
           var fName = Object.keys(filter).pop() || null;
 
           if(fName && fName in _filter) {
-            fieldValue = _filter[fName].call(_filter, fieldValue, filter[fName]);
+            fieldValue = _filter[fName].call(_this, fieldValue, filter[fName]);
           }
         }
       });
@@ -404,25 +411,32 @@ Conforma.prototype.namespace = function(namespace) {
 };
 
 /**
- * @param {*} needed
  * @param {*} obj
+ * @param {*} needed
  *
  * @returns {*}
  */
-function conform(needed, obj) {
-  needed = _extend({}, needed);
+function conform(obj, needed) {
+  obj = _extend(true, {}, obj);
 
-  Object.keys(needed).forEach(function(key) {
-    var v = obj.hasOwnProperty(key) ? obj[key] : false;
+  function remove(obj, needed) {
+    Object.keys(obj).forEach(function(key) {
+      var check = Object.prototype.hasOwnProperty.call(needed, key);
 
-    if(typeof v === 'function' || (v && typeof v === 'object')) {
-      needed[key] = conform(needed[key], obj[key]);
-    } else if(v !== false) {
-      needed[key] = v;
-    }
-  });
+      if(check) {
+        if(typeof obj[key] === 'object') {
+          obj[key] = remove(obj[key], needed[key]);
+        }
+      } else {
+        obj[key] = null;
+        delete obj[key];
+      }
+    });
 
-  return needed;
+    return obj;
+  }
+
+  return _extend(true, remove(obj, needed), needed);
 }
 
 /**
