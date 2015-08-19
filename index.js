@@ -426,7 +426,11 @@ function conform(src, conf) {
       } else if(typeof conf[key] === 'object' && Array.isArray(conf[key])) {
         dest[key] = conf[key];
       } else {
-        dest[key] = src[key] || conf[key];
+        if(Object.prototype.hasOwnProperty.call(src, key)) {
+          dest[key] = src[key];
+        } else {
+          dest[key] = src[key] || conf[key];
+        }
       }
     });
 

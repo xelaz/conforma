@@ -105,7 +105,10 @@ describe('Data', function() {
         next:   2,
         parent: {
           child1: '4',
-          child2: 22
+          child2: 22,
+          child4: 0,
+          child5: false,
+          child6: null
         },
         foo:    'bar',
 
@@ -117,7 +120,10 @@ describe('Data', function() {
           child:  undefined,
           parent: {
             child1: undefined,
-            child3: undefined
+            child3: undefined,
+            child4: undefined,
+            child5: undefined,
+            child6: undefined
           },
 
           fun: function () {
@@ -126,11 +132,14 @@ describe('Data', function() {
         })
         .getData();
 
-      assert.equal(1, data.child);
-      assert.equal('4', data.parent.child1);
+      assert.strictEqual(1, data.child);
+      assert.strictEqual('4', data.parent.child1);
+      assert.strictEqual(0, data.parent.child4);
+      assert.strictEqual(false, data.parent.child5);
+      assert.strictEqual(null, data.parent.child6);
       assert.equal('undefined', typeof data.next, 'data.next must be undefined');
       assert.equal('undefined', typeof data.parent.child2, 'data.parent.child2 must be undefined');
-      assert.equal(undefined, data.parent.child3);
+      assert.strictEqual(undefined, data.parent.child3);
     });
   });
 
