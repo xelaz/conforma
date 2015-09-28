@@ -396,4 +396,23 @@ describe('Filters check', function() {
       assert.strictEqual('%3Ctest%3E!$%&/(', filtered.value5, 'value5 is not filtered url');
     });
   });
+
+  describe('date', function() {
+
+    it('should convert to valid date', function() {
+      var filtered = Conforma({
+        value1: '2015',
+        value2: '2015-12-23',
+        value3: '12.12.2015'
+      })
+        .filter('value1', {date: 'YYYY'})
+        .filter('value2', {date: 'YYYY-MM-DD'})
+        .filter('value3', {date: 'DD.MM.YYYY'})
+        .getData(true);
+
+      assert.strictEqual(2015, filtered.value1.getFullYear(), 'value1 invalid date');
+      assert.strictEqual(23, filtered.value2.getDate(), 'value2 invalid date');
+      assert.strictEqual(11, filtered.value3.getMonth(), 'value3 invalid date');
+    });
+  });
 });

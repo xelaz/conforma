@@ -149,7 +149,8 @@ If your data is valid, then you get the filtered and validated data:
 * addslashes (like php)
 * stripHtml (sanitize all html content)
 * email
-* url
+* url [node url object keys]
+* date [moment format]
 
 ## Validator
 * required
