@@ -371,4 +371,29 @@ describe('Filters check', function() {
       assert.strictEqual('', filtered.value10, 'value10 is not string');
     });
   });
+
+  describe('url', function() {
+
+    it('should convert to valid url', function() {
+      var filtered = Conforma({
+        value1: 'http://www.github.com',
+        value2: 'github.com',
+        value3: 'http://www.github.com/user?test=true',
+        value4: 'abrakadabra',
+        value5: '<test>!$%&/(',
+      })
+        .filter('value1', 'url')
+        .filter('value2', 'url')
+        .filter('value3', {url: { allowedFields: ['protocol', 'hostname']}})
+        .filter('value4', 'url')
+        .filter('value5', 'url')
+        .getData(true);
+
+      assert.strictEqual('http://www.github.com/', filtered.value1, 'value1 is not filtered url');
+      assert.strictEqual('github.com', filtered.value2, 'value2 is not filtered url');
+      assert.strictEqual('http://www.github.com', filtered.value3, 'value3 is not filtered url');
+      assert.strictEqual('abrakadabra', filtered.value4, 'value4 is not filtered url');
+      assert.strictEqual('%3Ctest%3E!$%&/(', filtered.value5, 'value5 is not filtered url');
+    });
+  });
 });

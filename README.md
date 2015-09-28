@@ -11,7 +11,7 @@ More examples you can find in example path or in test.
 ```javascript
 
     var conforma = require('conforma');
-    
+
     formData.setData({
       value1: '123',
       value2: 'yes',
@@ -52,18 +52,18 @@ If your data is invalid, then you get error:
 
 ```javascript
 
-    { 
+    {
       [Error: Conforma Validation Error]
-      errors: 
+      errors:
        [ { name: 'ConformaError',
            message: 'email.invalid.format %s',
            field: 'nested.value1',
-           value: 'email(at)localhost' 
+           value: 'email(at)localhost'
          },
          { name: 'ConformaError',
            message: 'only.alpha.allowed',
            field: 'nested.value2',
-           value: 'HÄNSEL UND GRETEL' 
+           value: 'HÄNSEL UND GRETEL'
          } ]
     }
 ```
@@ -72,14 +72,14 @@ If your data is valid, then you get the filtered and validated data:
 
 ```javascript
 
-    { 
+    {
       value1: 123,
       value2: true,
-      nested: 
+      nested:
        { value1: 'email(at)localhost',
          value2: 'HÄNSEL UND GRETEL',
          value3: '&lt;html&gt;Hello World!&lt;/html&gt;'
-       } 
+       }
     }
 ```
 
@@ -88,7 +88,7 @@ If your data is valid, then you get the filtered and validated data:
 ```javascript
     var conforma = require('conforma');
     var formData = new conforma.Conforma();
-    
+
     formData.setData({
       value1: '123',
       value2: 'yes'
@@ -110,7 +110,7 @@ If your data is valid, then you get the filtered and validated data:
 
     var conforma = require('conforma');
     var formData = new conforma.Conforma();
-    
+
     formData.setData({
       value1: '123',
       value2: 'yes'
@@ -149,6 +149,7 @@ If your data is valid, then you get the filtered and validated data:
 * addslashes (like php)
 * stripHtml (sanitize all html content)
 * email
+* url
 
 ## Validator
 * required
