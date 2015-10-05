@@ -416,12 +416,16 @@ describe('Validators check', function() {
 
       conforma.setData({
         date1: '12.31.2015',
-        date2: '31.12.2015'
+        date2: '31.12.2015',
+        date3: new Date(),
+        date4: new Date()
       })
         .validate('date1', {isDate: 'MM.DD.YYYY'})
         .validate('date2', {isDate: 'DD.MM.YYYY'})
+        .validate('date3', 'isDate')
+        .validate('date4', {isDate: 'YYYY-DD-MM'})
         .exec()
-        .then(function() {
+        .then(function(data) {
           done();
         });
     });
@@ -431,13 +435,16 @@ describe('Validators check', function() {
 
       conforma.setData({
         date1: '12.31.2015',
-        date2: '31.12.2015'
+        date2: '31.12.2015',
+        date3: ''
       })
         .validate('date1', 'isDate')
         .validate('date2', 'isDate')
+        .validate('date3', 'isDate')
         .exec()
         .catch(function(err) {
           assert.equal('date2', err.errors[0].field);
+          assert.equal('date3', err.errors[1].field);
           done();
         });
     });
