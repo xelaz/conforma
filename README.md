@@ -154,6 +154,7 @@ If your data is valid, then you get the filtered and validated data:
 
 ## Validator
 * required
+* empty     allow empty fields
 * email
 * emailMx
 * alpha (UTF8 and whitespaces)

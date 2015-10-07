@@ -54,6 +54,12 @@ Conforma.prototype.reset = function() {
   this._required  = [];
 
   /**
+   * @type {Array}
+   * @private
+   */
+  this._empty  = [];
+
+  /**
    * @type {{}}
    * @private
    */
@@ -250,6 +256,10 @@ Conforma.prototype._applyValidator = function (field, key) {
     this._required[field] = true;
   }
 
+  if(key === 'empty' && !this._empty.hasOwnProperty(field)) {
+    this._empty[field] = true;
+  }
+
   if(typeof key === 'string') {
     func = _validator[key] && _validator[key]();
   } else if(typeof key === 'function') {
@@ -319,9 +329,13 @@ Conforma.prototype.exec = function(done) {
       if(field in _self._required && val === undefined) {
         sync.push(Promise.try(_validator.required(), [extendedFiled, val], _self));
       } else {
-        _self._validator[field].forEach(function(f) {
-          sync.push(Promise.try(f, [extendedFiled, val], _self));
-        });
+        if(field in _self._empty && !val) {
+          // do nothing)
+        } else {
+          _self._validator[field].forEach(function(f) {
+            sync.push(Promise.try(f, [extendedFiled, val], _self));
+          });
+        }
       }
     }
   }

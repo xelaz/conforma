@@ -40,12 +40,14 @@ describe('Validators check', function() {
         value1: 'TESTm1eä3öüÄÜÖß',
         value2: 'TESTmeäöüÄÜÖß',
         value3: 'TEST me äöüÄÜÖß',
-        value4: 'TEST m12e äöüÄÜÖß'
+        value4: 'TEST m12e äöüÄÜÖß',
+        value5: true
       })
         .validate('value1', 'alpha')
         .validate('value2', 'alpha')
         .validate('value3', 'alpha')
         .validate('value4', 'alpha')
+        .validate('value5', 'alpha')
         .exec()
         .catch(function(err) {
           var errors = err.errors;
@@ -58,6 +60,10 @@ describe('Validators check', function() {
 
           var err3 = errors.shift();
           assert.equal(err3.field, 'value4');
+
+          var err4 = errors.shift();
+          assert.equal(err4.field, 'value5');
+
           done();
         });
     });
@@ -528,4 +534,49 @@ describe('Validators check', function() {
     });
   });
 
+  describe('empty', function() {
+    it('should not validate on empty', function (done) {
+      Conforma({
+        value1: 'Lorem',
+        value2: '',
+        value3: null,
+        value4: undefined,
+        value5: 0,
+        value6: false,
+        value7: 'Lorem'
+      })
+        .validate('value1', 'alpha')
+        .validate('value2', ['empty', 'alpha'])
+        .validate('value3', ['empty', 'alpha'])
+        .validate('value4', ['empty', 'alpha'])
+        .validate('value5', ['empty', 'alpha'])
+        .validate('value6', ['empty', 'alpha'])
+        .validate('value7', 'empty')
+        .exec()
+        .then(function() {
+          done();
+        });
+    });
+
+    it('should validate on empty', function (done) {
+      Conforma({
+        value1: 'Lorem',
+        value2: ' ',
+        value3: '12345',
+        value4: 12345,
+        value5: true,
+        value6: 'Lorem'
+      })
+        .validate('value1', 'alpha')
+        .validate('value2', ['empty', 'alpha'])
+        .validate('value3', ['alnum','empty', 'alpha'])
+        .validate('value4', ['empty', 'alpha'])
+        .validate('value5', ['empty', 'alpha'])
+        .validate('value6', ['empty', 'alpha'])
+        .exec()
+        .catch(function() {
+          done();
+        });
+    });
+  });
 });
