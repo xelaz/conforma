@@ -198,7 +198,7 @@ Conforma.prototype.filter = function(field, filter) {
     return this;
   }
 
-  if(!this._filter[field]) {
+  if(!this._filter.hasOwnProperty(field)) {
     this._filter[field] = [];
   }
 
@@ -228,7 +228,7 @@ Conforma.prototype.validate = function(field, validator) {
 
   var _self = this;
 
-  if(!this._validator[field]) {
+  if(!this._validator.hasOwnProperty(field)) {
     this._validator[field] = [];
   }
 
