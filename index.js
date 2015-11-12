@@ -324,16 +324,20 @@ Conforma.prototype.exec = function(done) {
   for(var field in this._validator) {
     if(this._validator.hasOwnProperty(field)) {
       val = this.getValue(field);
-      var extendedFiled = _self._namespace ? [_self._namespace, field].join('.') : field;
+      var extendedField = _self._namespace ? [_self._namespace, field].join('.') : field;
 
       if(field in _self._required && val === undefined) {
-        sync.push(Promise.try(_validator.required(), [extendedFiled, val], _self));
+        sync.push(Promise.try(function() {
+          return _validator.required()(extendedField, val);
+        }));
       } else {
         if(field in _self._empty && !val) {
           // do nothing)
         } else {
           _self._validator[field].forEach(function(f) {
-            sync.push(Promise.try(f, [extendedFiled, val], _self));
+            sync.push(Promise.try(function() {
+              return f.call(_self, extendedField, val);
+            }));
           });
         }
       }
