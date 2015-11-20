@@ -1,4 +1,4 @@
-# conforma
+# [![Build Status](https://travis-ci.org/xelaz/conforma.svg?branch=master)](https://travis-ci.org/xelaz/conforma) conforma
 Filter, validate and conform your data from POST request data in Express
 
 ## Install
@@ -159,6 +159,7 @@ If your data is valid, then you get the filtered and validated data:
 * emailMx
 * alpha (UTF8 and whitespaces)
 * alnum (UTF8 and whitespaces)
+* number (allowed decimal place ,.)
 * notEmpty
 * equals
 * compare (with other fields)
@@ -175,5 +176,3 @@ If your data is valid, then you get the filtered and validated data:
 * your suggestion
 * i18n error messages
 * bug fixing
-
-[![Build Status](https://travis-ci.org/xelaz/conforma.svg?branch=master)](https://travis-ci.org/xelaz/conforma)

@@ -140,6 +140,40 @@ describe('Validators check', function() {
     });
   });
 
+  describe('number', function() {
+    it('should allow number', function(done) {
+      var conforma = new Conforma();
+      conforma.setData({
+          value1: '12345',
+          value2: 12345,
+          value3: '123.456',
+          value4: '123,456',
+          value5: 'abc',
+          value6: '123 456'
+        })
+        .validate('value1', 'number')
+        .validate('value2', 'number')
+        .validate('value3', 'number')
+        .validate('value4', 'number')
+        .validate('value5', 'number')
+        .validate('value6', 'number')
+        .exec()
+        .catch(function(err) {
+          var errors = err.errors;
+
+          var err1 = errors.shift();
+          assert.equal(err1.field, 'value5');
+
+          var err2 = errors.shift();
+          assert.equal(err2.field, 'value6');
+
+          assert.equal(0, errors.length);
+
+          done();
+        });
+    });
+  });
+
   describe('required', function() {
     it('should required', function(done) {
       var conforma = new Conforma();
