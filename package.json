@@ -1,10 +1,11 @@
 {
   "name": "conforma",
-  "version": "1.14.0",
-  "description": "simple form data filter and validator",
+  "version": "1.15.0",
+  "description": "Simple form data filter and validator with promises",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",

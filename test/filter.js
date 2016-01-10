@@ -25,13 +25,13 @@ describe('Conforma.filter args check', function() {
       .filter('value7', ['string', 'lowerCase'])
       .getData(true);
 
-    assert.strictEqual('123', filteredData.value1, 'value1');
-    assert.strictEqual('test', filteredData.value2, 'value2');
-    assert.equal('TESTTEST', filteredData.value3, 'value3');
-    assert.equal('TEST', filteredData.value4, 'value4');
-    assert.equal('tes', filteredData.value5, 'value5');
-    assert.equal('TE', filteredData.value6, 'value6');
-    assert.equal('', filteredData.value7, 'value7');
+    assert.strictEqual(filteredData.value1, '123', 'value1');
+    assert.strictEqual(filteredData.value2, 'test', 'value2');
+    assert.equal(filteredData.value3, 'TESTTEST', 'value3');
+    assert.equal(filteredData.value4, 'TEST', 'value4');
+    assert.equal(filteredData.value5, 'tes', 'value5');
+    assert.equal(filteredData.value6, 'TE', 'value6');
+    assert.equal(filteredData.value7, '', 'value7');
   });
 });
 
@@ -412,10 +412,10 @@ describe('Filters check', function() {
         .filter('value4', {date: 'DD.MM.YYYY'})
         .getData(true);
 
-      assert.strictEqual(2015, filtered.value1.getFullYear(), 'value1 invalid date');
-      assert.strictEqual(23, filtered.value2.getDate(), 'value2 invalid date');
-      assert.strictEqual(11, filtered.value3.getMonth(), 'value3 invalid date');
-      assert.equal('', filtered.value4, 'value4 invalid date');
+      assert.strictEqual(filtered.value1.getFullYear(), 2015, 'value1 invalid date');
+      assert.strictEqual(filtered.value2.getDate(), 23, 'value2 invalid date');
+      assert.strictEqual(filtered.value3.getMonth(), 11, 'value3 invalid date');
+      assert.equal(filtered.value4, '', 'value4 invalid date');
     });
   });
 });

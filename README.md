@@ -167,6 +167,7 @@ If your data is valid, then you get the filtered and validated data:
 * isDate (format please use moment)
 * inList
 * length (min, max)
+* objectId (Mongo ObjectID)
 
 ## TODO
 * extend all tests

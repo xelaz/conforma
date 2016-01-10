@@ -613,4 +613,41 @@ describe('Validators check', function() {
         });
     });
   });
+
+  describe('objectId', function() {
+    it('should valid objectId', function () {
+      return Conforma({
+        value1: '000123456789ABCDEFabcdef'
+      })
+        .validate('value1', 'objectId')
+        .exec();
+    });
+
+    it('should throw error on invalid objectId', function () {
+      return Conforma({
+        value1: '',
+        value2: 1234567890,
+        value3: 'QWERTZUIOPLKJHGFDSAYXCVB',
+        value4: 'QWERTZUIOPLKJHGFDSAYXCVBNM',
+        value5: null,
+        value6: false,
+        value7: undefined
+      })
+        .validate('value1', 'objectId')
+        .validate('value2', 'objectId')
+        .validate('value3', 'objectId')
+        .validate('value4', 'objectId')
+        .validate('value5', 'objectId')
+        .validate('value6', 'objectId')
+        .validate('value7', 'objectId')
+        .exec()
+        .then(function() {
+          assert.ok(false, 'object validation must throw error on invalid objectid')
+        })
+        .catch(function(err) {
+          assert.equal(err.errors.length, 7);
+          assert.ok(err instanceof Error);
+        });
+    });
+  });
 });
