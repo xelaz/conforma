@@ -1,6 +1,6 @@
 "use strict";
 
-var assert = require("assert"),
+var assert = require('assert'),
   conforma = require('../index'),
   Conforma = conforma.Conforma;
 
@@ -214,16 +214,16 @@ describe('Validators check', function() {
   });
 
   describe('notEmpty', function() {
-    it('should not be empty', function(done) {
-      var conforma = new Conforma();
-      conforma.setData({
-        value1: 'TEST',
+    it('should throw empty error', function() {
+      return Conforma({
+        value1: {},
         value2: '',
         value3: [],
         value4: 0,
         value5: '0',
         value6: false,
-        value7: null
+        value7: null,
+        value8: undefined
       })
         .validate('value1', 'notEmpty')
         .validate('value2', 'notEmpty')
@@ -233,11 +233,34 @@ describe('Validators check', function() {
         .validate('value6', 'notEmpty')
         .validate('value7', 'notEmpty')
         .validate('value8', 'notEmpty')
+        .validate('value9', 'notEmpty')
         .exec()
         .catch(function(err) {
           var errors = err.errors;
-          assert.equal(6, errors.length, 'notEmpty is not compatible');
-          done();
+          assert.equal(errors.length, 9, 'notEmpty is not compatible');
+        });
+    });
+
+    it('should not empty', function() {
+      return Conforma({
+        value1: {test:1},
+        value2: ' ',
+        value3: [1],
+        value4: 1,
+        value5: 'q',
+        value6: true,
+        value7: function() {}
+      })
+        .validate('value1', 'notEmpty')
+        .validate('value2', 'notEmpty')
+        .validate('value3', 'notEmpty')
+        .validate('value4', 'notEmpty')
+        .validate('value5', 'notEmpty')
+        .validate('value6', 'notEmpty')
+        .validate('value7', 'notEmpty')
+        .exec()
+        .catch(function() {
+          assert.ok(false, 'notEmpty is not compatible');
         });
     });
   });
@@ -313,10 +336,10 @@ describe('Validators check', function() {
   });
 
   describe('contains', function() {
-    it('should contains snippets', function(done) {
+    it('should contains snippets', function() {
       var conforma = new Conforma();
 
-      conforma.setData({
+      return conforma.setData({
         value1: 'TEST'
       })
         .validate('value1', {contains: 'TEST'})
@@ -324,15 +347,13 @@ describe('Validators check', function() {
         .validate('value1', {contains: 'ST'})
         .validate('value1', {contains: 'ES'})
         .exec()
-        .then(function() {
-          done();
+        .catch(function() {
+          assert.ok(false);
         });
     });
 
-    it('should not contains snippets', function(done) {
-      var conforma = new Conforma();
-
-      conforma.setData({
+    it('should not contains snippets', function() {
+      return Conforma({
         value1: 'TEST'
       })
         .validate('value1', {contains: 'ABC'})
@@ -343,7 +364,6 @@ describe('Validators check', function() {
         .exec()
         .catch(function(err) {
           assert.equal(4, err.errors.length, 'contains not work');
-          done();
         });
     });
   });
@@ -569,8 +589,8 @@ describe('Validators check', function() {
   });
 
   describe('empty', function() {
-    it('should not validate on empty', function (done) {
-      Conforma({
+    it('should not validate on empty', function () {
+      return Conforma({
         value1: 'Lorem',
         value2: '',
         value3: null,
@@ -585,31 +605,13 @@ describe('Validators check', function() {
         .validate('value4', ['empty', 'alpha'])
         .validate('value5', ['empty', 'alpha'])
         .validate('value6', ['empty', 'alpha'])
-        .validate('value7', 'empty')
-        .exec()
-        .then(function() {
-          done();
-        });
-    });
-
-    it('should validate on empty', function (done) {
-      Conforma({
-        value1: 'Lorem',
-        value2: ' ',
-        value3: '12345',
-        value4: 12345,
-        value5: true,
-        value6: 'Lorem'
-      })
-        .validate('value1', 'alpha')
-        .validate('value2', ['empty', 'alpha'])
-        .validate('value3', ['alnum','empty', 'alpha'])
-        .validate('value4', ['empty', 'alpha'])
-        .validate('value5', ['empty', 'alpha'])
-        .validate('value6', ['empty', 'alpha'])
+        .validate('value7', ['empty', 'alpha'])
         .exec()
         .catch(function() {
-          done();
+          assert.ok(false, 'it must be OK');
+        })
+        .then(function() {
+          assert.ok(true);
         });
     });
   });

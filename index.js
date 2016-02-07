@@ -18,7 +18,6 @@ var util = require('util'),
  *
  * @property {Array}   _filter
  * @property {Array}   _validator
- * @property {Array}   _required
  * @property {Object}  _data
  *
  * @returns {Conforma}
@@ -48,16 +47,10 @@ Conforma.prototype.reset = function() {
   this._validator = [];
 
   /**
-   * @type {Array}
+   * @type {Object}
    * @private
    */
-  this._required  = [];
-
-  /**
-   * @type {Array}
-   * @private
-   */
-  this._empty  = [];
+  this._msg  = {};
 
   /**
    * @type {{}}
@@ -217,11 +210,12 @@ Conforma.prototype.filter = function(field, filter) {
 
 /**
  * @param {String}              field
- * @param {string|array|object} validator
+ * @param {String|Array|Object} validator
+ * @param {Object} [msg]
  *
  * @returns {Conforma}
  */
-Conforma.prototype.validate = function(field, validator) {
+Conforma.prototype.validate = function(field, validator, msg) {
   if(!field || !validator) {
     return this;
   }
@@ -229,15 +223,15 @@ Conforma.prototype.validate = function(field, validator) {
   var _this = this;
 
   if(!this._validator.hasOwnProperty(field)) {
-    this._validator[field] = [];
+    this._validator[field] = {};
   }
 
   if(util.isArray(validator)) {
     validator.forEach(function(key) {
-      _this._applyValidator(field, key);
+      _this._applyValidator(field, key, msg);
     });
   } else {
-    _this._applyValidator(field, validator);
+    _this._applyValidator(field, validator, msg);
   }
 
   return this;
@@ -246,34 +240,36 @@ Conforma.prototype.validate = function(field, validator) {
 /**
  * @param {String} field
  * @param {String} key
+ * @param {Object} [msg]
  *
  * @private
  */
-Conforma.prototype._applyValidator = function (field, key) {
-  var func = null, vName;
+Conforma.prototype._applyValidator = function (field, key, msg) {
+  var vName, func;
 
-  if(key === 'required' && !this._required.hasOwnProperty(field)) {
-    this._required[field] = true;
-  }
-
-  if(key === 'empty' && !this._empty.hasOwnProperty(field)) {
-    this._empty[field] = true;
-  }
-
-  if(typeof key === 'string') {
-    func = _validator[key] && _validator[key]();
+  if(typeof key === 'string' && key in _validator) {
+    func = _validator[key]();
   } else if(typeof key === 'function') {
     func = key;
+    key = '#' + Object.keys(this._validator[field]).length;
   } else if(typeof key === 'object') {
-    vName = Object.keys(key).pop() || null;
 
-    if(vName && vName in _validator) {
+    vName = Object.keys(key)[0] + '' || null;
+
+    if(vName in _validator) {
       func = _validator[vName].call(_validator, key[vName]);
+      msg = key.msg || msg;
+      key = vName;
     }
   }
 
-  if(func && key !== 'required') {
-    this._validator[field].push(func);
+  if(func) {
+    if(!this._validator[field][key]) {
+      this._validator[field][key] = [];
+    }
+
+    this._msg[field + key] = msg;
+    this._validator[field][key][this._validator[field][key].length] = func;
   }
 };
 
@@ -309,6 +305,8 @@ Conforma.prototype._runFilter = function() {
 };
 
 /**
+ * Filter data and validate
+ *
  * @param {function} [done] - callback or promise
  *
  * @returns {Promise}
@@ -320,23 +318,27 @@ Conforma.prototype.exec = function(done) {
 
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);
+    var validators = _this._validator[field];
     var extendedField = _this._namespace ? [_this._namespace, field].join('.') : field;
 
-    if(field in _this._required && val === undefined) {
-      sync.push(Promise.try(function() {
-        return _validator.required()(extendedField, val);
-      }));
+    if('required' in validators && val === undefined) {
+      sync[sync.length] = Promise.try(function () {
+        return _validator.required()(extendedField, val, _this._msg[field+'required']);
+      });
+    } else if('notEmpty' in validators && !(val|0)) {
+      sync[sync.length] = Promise.try(function () {
+        return _validator.notEmpty()(extendedField, val, _this._msg[field+'notEmpty']);
+      });
+    } else if('empty' in validators) {
+      sync[sync.length] = Promise.resolve();
     } else {
-      if(field in _this._empty && !val) {
-        sync.push(Promise.resolve());
-        // do nothing)
-      } else {
-        _this._validator[field].forEach(function(f) {
-          sync.push(Promise.try(function() {
-            return f.call(_this, extendedField, val);
-          }));
+      Object.keys(validators).map(function(validator) {
+        validators[validator].map(function(v) {
+          sync[sync.length] = Promise.try(function () {
+            return v.call(_this, extendedField, val, _this._msg[field+validator]);
+          });
         });
-      }
+      });
     }
   });
 
@@ -380,7 +382,7 @@ Conforma.prototype.exec = function(done) {
 
       return _this.getData();
     })
-    .nodeify(done && done.bind(_this));
+    .nodeify(done && done.bind(this));
 };
 
 /**
@@ -391,7 +393,7 @@ Conforma.prototype.mount = function() {
   return this.exec().then(function(data) {
     if(_this._namespace) {
       var o = {};
-      // TODO: complexe nestings
+      // TODO: complex nesting
       o[_this._namespace] = _this.getData();
       return o;
     } else {
@@ -453,25 +455,17 @@ function conform(src, conf) {
   return rec(dest, src, conf);
 }
 
-/**
- * @type {Conforma}
- */
+/** @type {Conforma} */
 module.exports.Conforma = Conforma;
 
-/**
- * @type {ConformaFilter}
- */
+/** @type {ConformaFilter} */
 module.exports.ConformaFilter = _filter;
 
 /** @type {ConformaError} */
 module.exports.ConformaError = ConformaError;
 
-/**
- * @type {ConformaValidationError}
- */
+/** @type {ConformaValidationError} */
 module.exports.ConformaValidationError = ConformaValidationError;
 
-/**
- * @type {function}
- */
+/** @type {function} */
 module.exports.conform = conform;
