@@ -60,6 +60,13 @@ Conforma.prototype.reset = function() {
 
   /**
    *
+   * @type {Object|null}
+   * @private
+   */
+  this._rawData   = null;
+
+  /**
+   *
    * @type {null}
    * @private
    */
@@ -136,10 +143,19 @@ Conforma.prototype.setData = function(data) {
  */
 Conforma.prototype.getData = function(clean) {
   if(clean) {
-    this._runFilter();
+    this._data = this._runFilter(this._data);
   }
 
   return _extend(true, {}, this._data);
+};
+
+/**
+ * @param {Boolean} [clean] - get clean or raw data
+ *
+ * @returns {{}|*}
+ */
+Conforma.prototype.getRawData = function(clean) {
+  return this._rawData;
 };
 
 /**
@@ -163,7 +179,7 @@ Conforma.prototype.default = function(value) {
 };
 
 /**
- * @param {*} value
+ * @param {Object|true} value
  *
  * @throws Error
  *
@@ -174,7 +190,11 @@ Conforma.prototype.conform = function(value) {
     throw new Error('conform empty value');
   }
 
-  this._data = conform(this._data, value);
+  if(value === true) {
+    this._data = this._runFilter({});
+  } else {
+    this._data = conform(this._data, value);
+  }
 
   return this;
 };
@@ -274,12 +294,13 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
 };
 
 /**
- * @returns {Conforma}
+ * @returns {Object}
  *
  * @private
  */
-Conforma.prototype._runFilter = function() {
+Conforma.prototype._runFilter = function(dest) {
   var _this = this;
+  this._rawData = this._data;
 
   Object.keys(this._filter).forEach(function(field) {
     var fieldValue = _this.getValue(field);
@@ -298,10 +319,10 @@ Conforma.prototype._runFilter = function() {
       }
     });
 
-    mpath.set(field, fieldValue, _this._data);
+    mpath.set(field, fieldValue, dest);
   });
 
-  return this;
+  return dest;
 };
 
 /**
@@ -312,7 +333,7 @@ Conforma.prototype._runFilter = function() {
  * @returns {Promise}
  */
 Conforma.prototype.exec = function(done) {
-  this._runFilter();
+  this._data = this._runFilter(this._data);
 
   var _this = this, sync = [];
 

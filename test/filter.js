@@ -53,10 +53,10 @@ describe('Filters check', function() {
         .filter('value4.value1', 'trim')
         .getData(true);
 
-      assert.equal('test', filtered.value1);
-      assert.equal('test', filtered.value2);
-      assert.equal('test', filtered.value3);
-      assert.equal('test', filtered.value4.value1);
+      assert.equal(filtered.value1, 'test');
+      assert.equal(filtered.value2, 'test');
+      assert.equal(filtered.value3, 'test');
+      assert.equal(filtered.value4.value1, 'test');
     });
   });
 

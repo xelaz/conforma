@@ -57,12 +57,12 @@ describe('Data', function() {
         }).setData()
         .getData();
 
-      assert.equal(1, data.child);
-      assert.equal(22, data.parent.child2);
-      assert.equal(3, data.parent.child3);
-      assert.equal(2, data.next);
-      assert.equal('', data.second);
-      assert.equal(3, data.third.length);
+      assert.equal(data.child, 1);
+      assert.equal(data.parent.child2, 22);
+      assert.equal(data.parent.child3, 3);
+      assert.equal(data.next, 2);
+      assert.equal(data.second, '');
+      assert.equal(data.third.length, 3);
     });
 
     it('set main data then default', function() {
@@ -88,17 +88,16 @@ describe('Data', function() {
         })
         .getData();
 
-      assert.equal(1, data.child);
-      assert.equal(22, data.parent.child2);
-      assert.equal(3, data.parent.child3);
-      assert.equal(2, data.next);
-      assert.equal('', data.second);
-      assert.equal(3, data.third.length);
+      assert.equal(data.child, 1);
+      assert.equal(data.parent.child2, 22);
+      assert.equal(data.parent.child3, 3);
+      assert.equal(data.next,2);
+      assert.equal(data.second, '');
+      assert.equal(data.third.length, 3);
     });
   });
 
   describe('conform', function() {
-
     it('must contain only conformed data structure', function () {
       var data = Conforma({
         child:  1,
@@ -141,10 +140,56 @@ describe('Data', function() {
       assert.equal('undefined', typeof data.parent.child2, 'data.parent.child2 must be undefined');
       assert.strictEqual(undefined, data.parent.child3);
     });
+
+    it('should conform with filter', function () {
+      var data = Conforma({
+        child:  1,
+        next:   2,
+        parent: {
+          child1: '4',
+          child2: 22,
+          child4: 0,
+          child5: false,
+          child6: null
+        },
+        foo:    'bar',
+        foo1:    ['bar'],
+        bar:    null,
+        bar1:    {test: 123},
+        trash: 123,
+
+        fun2: function () {
+          console.log('fun');
+        }
+      })
+        .filter('parent', 'object')
+        .filter('parent.child1', 'int')
+        .filter('parent.child2', 'string')
+        .filter('parent.child3', 'bool')
+        .filter('next', 'int')
+        .filter('foo', 'array')
+        .filter('foo1', 'array')
+        .filter('foo1.1', 'string')
+        .filter('foo1.2', 'int')
+        .filter('bar', 'object')
+        .filter('bar1', 'object')
+        .filter('bar1.test', 'string')
+        .conform(true)
+        .getData();
+
+      assert.strictEqual(data.child, undefined);
+      assert.strictEqual(data.parent.child1, 4);
+      assert.strictEqual(data.parent.child4, undefined);
+      assert.ok(Array.isArray(data.foo));
+      assert.ok(Array.isArray(data.foo1));
+      assert.strictEqual(data.foo1[2], 0);
+      assert.ok(data.bar !== null);
+      assert.strictEqual(data.bar1.test, '123');
+      assert.strictEqual(data.trash, undefined);
+    });
   });
 
   describe('move', function() {
-
     it('must src node to dest node and remove src node', function() {
       var data = Conforma({
           node1: {
@@ -216,18 +261,22 @@ describe('Data', function() {
 
       var ndata = cnf.getData();
 
-      assert.equal(222, ndata.test);
-      assert.equal(222, ndata.sub.numbers);
+      assert.equal(ndata.test, 222);
+      assert.equal(ndata.sub.numbers, 222);
 
       ndata.test = 333;
       ndata.sub.numbers = 333;
 
       var ndata2 = cnf.getData();
 
-      assert.equal(333, ndata.test);
-      assert.equal(333, ndata.sub.numbers);
-      assert.equal(222, ndata2.test);
-      assert.equal(222, ndata2.sub.numbers);
+      assert.equal(ndata2.test, 222);
+      assert.equal(ndata2.sub.numbers, 222);
+
+      var next = cnf.getValue('test');
+      next = 444;
+
+      assert.equal(cnf.getValue('test'), 222);
+      assert.equal(cnf.getValue('sub.numbers'), 222);
     });
   });
 });
