@@ -316,6 +316,8 @@ Conforma.prototype._runFilter = function(dest) {
         if(fName && fName in _filter) {
           fieldValue = _filter[fName].call(_this, fieldValue, filter[fName]);
         }
+      } else {
+        throw new Error('Filter "'+ filter +'" not available');
       }
     });
 
@@ -333,9 +335,12 @@ Conforma.prototype._runFilter = function(dest) {
  * @returns {Promise}
  */
 Conforma.prototype.exec = function(done) {
-  this._data = this._runFilter(this._data);
-
   var _this = this, sync = [];
+
+  sync[sync.length] = Promise.resolve()
+    .then(function() {
+      _this._data = _this._runFilter(_this._data);
+    });
 
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);

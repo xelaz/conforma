@@ -19,19 +19,49 @@ describe('Conforma.filter args check', function() {
       .filter('value3', function(value) {
         return value + 'TEST';
       })
-      .filter('value4', 'unknown')
+      .filter('value4', 'int')
       .filter('value5', ['lowerCase', 'stringLength', {stringLength: 3}])
       .filter('value6', {stringLength: 2})
       .filter('value7', ['string', 'lowerCase'])
       .getData(true);
 
-    assert.strictEqual(filteredData.value1, '123', 'value1');
-    assert.strictEqual(filteredData.value2, 'test', 'value2');
-    assert.equal(filteredData.value3, 'TESTTEST', 'value3');
-    assert.equal(filteredData.value4, 'TEST', 'value4');
-    assert.equal(filteredData.value5, 'tes', 'value5');
-    assert.equal(filteredData.value6, 'TE', 'value6');
-    assert.equal(filteredData.value7, '', 'value7');
+    assert.strictEqual(filteredData.value1, '123');
+    assert.strictEqual(filteredData.value2, 'test');
+    assert.equal(filteredData.value3, 'TESTTEST');
+    assert.equal(filteredData.value4, 0);
+    assert.equal(filteredData.value5, 'tes');
+    assert.equal(filteredData.value6, 'TE');
+    assert.equal(filteredData.value7, '');
+  });
+
+  it('should throw error on unknown filter if exec', function() {
+    var formData = new Conforma();
+    return formData.setData({
+        value1: 123
+      })
+      .filter('value1', 'unknown')
+      .exec()
+      .then(function() {
+        assert.ok(false);
+      })
+      .catch(function(err) {
+        assert.ok(err == 'Error: Filter "unknown" not available');
+      });
+  });
+
+  it('should throw error on unknown filter if getData', function() {
+    try {
+      Conforma({
+          value1: 123
+        })
+        .filter('value1', 'unknown')
+        .getData(true);
+    } catch(err) {
+      assert.ok(err == 'Error: Filter "unknown" not available');
+      return;
+    }
+
+    throw new Error('Filter not valid');
   });
 });
 
