@@ -1,6 +1,6 @@
 {
   "name": "conforma",
-  "version": "1.19.1",
+  "version": "1.19.2",
   "description": "Simple form data filter and validator",
   "main": "index.js",
   "scripts": {

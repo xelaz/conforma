@@ -337,10 +337,9 @@ Conforma.prototype._runFilter = function(dest) {
 Conforma.prototype.exec = function(done) {
   var _this = this, sync = [];
 
-  sync[sync.length] = Promise.resolve()
-    .then(function() {
-      _this._data = _this._runFilter(_this._data);
-    });
+  sync[sync.length] = Promise.try(function () {
+    _this._data = _this._runFilter(_this._data);
+  });
 
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);
