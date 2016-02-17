@@ -350,11 +350,11 @@ Conforma.prototype.exec = function(done) {
       sync[sync.length] = Promise.try(function () {
         return _validator.required()(extendedField, val, _this._msg[field+'required']);
       });
-    } else if('notEmpty' in validators && !(val|0)) {
+    } else if('notEmpty' in validators && _validator.isEmpty(val)) {
       sync[sync.length] = Promise.try(function () {
         return _validator.notEmpty()(extendedField, val, _this._msg[field+'notEmpty']);
       });
-    } else if('empty' in validators) {
+    } else if('empty' in validators && _validator.isEmpty(val)) {
       sync[sync.length] = Promise.resolve();
     } else {
       Object.keys(validators).map(function(validator) {

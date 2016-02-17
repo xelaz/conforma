@@ -198,6 +198,9 @@ describe('Validators check', function() {
         .validate('value4.child5', 'required')
         .validate('value4.child6', 'required')
         .exec()
+        .then(function() {
+          console.log('__________________________________________');
+        })
         .catch(function(err) {
           var errors = err.errors;
 
@@ -263,6 +266,33 @@ describe('Validators check', function() {
           assert.ok(false, 'notEmpty is not compatible');
         });
     });
+
+    /*it('should stop validate on empty', function() {
+      return Conforma({
+        value1: {test:1},
+        value2: ' ',
+        value3: [1],
+        value4: 1,
+        value5: 'q',
+        value6: true,
+        value7: function() {},
+        value8: '',
+        value9: 0,
+        value8: '',
+
+      })
+        .validate('value1', ['notEmpty', 'alpha'])
+        .validate('value2', ['notEmpty', 'alpha'])
+        .validate('value3', ['notEmpty', 'alpha'])
+        .validate('value4', ['notEmpty', 'alpha'])
+        .validate('value5', ['notEmpty', 'alpha'])
+        .validate('value6', ['notEmpty', 'alpha'])
+        .validate('value7', ['notEmpty', 'alpha'])
+        .exec()
+        .catch(function() {
+          assert.ok(false, 'notEmpty is not compatible');
+        });
+    });*/
   });
 
   describe('email', function() {
