@@ -34,19 +34,17 @@ describe('Conforma.filter args check', function() {
     assert.equal(filteredData.value7, '');
   });
 
-  it('should throw error on unknown filter if exec', function() {
+  it('should throw error on unknown filter', function() {
     var formData = new Conforma();
-    return formData.setData({
-        value1: 123
-      })
-      .filter('value1', 'unknown')
-      .exec()
-      .then(function() {
-        assert.ok(false);
-      })
-      .catch(function(err) {
-        assert.ok(err == 'Error: Filter "unknown" not available');
-      });
+    try {
+      return formData.setData({
+          value1: 123
+        })
+        .filter('value1', 'unknown')
+        .exec();
+    } catch(err) {
+      assert.ok(err == 'Error: Filter "unknown" not available');
+    }
   });
 
   it('should throw error on unknown filter if getData', function() {

@@ -72,6 +72,13 @@ Conforma.prototype.reset = function() {
    */
   this._namespace = null;
 
+  /**
+   *
+   * @type {Boolean}
+   * @private
+   */
+  this._filtered = false;
+
   return this;
 };
 
@@ -191,6 +198,7 @@ Conforma.prototype.conform = function(value) {
   }
 
   if(value === true) {
+    this._filtered = true;
     this._data = this._runFilter({});
   } else {
     this._data = conform(this._data, value);
@@ -215,7 +223,7 @@ Conforma.prototype.filter = function(field, filter) {
     this._filter[field] = [];
   }
 
-  if(typeof filter === 'string' && filter !== '') {
+  if(typeof filter === 'string' && filter !== '' && filter in _filter) {
     this._filter[field].push(filter);
   } else if(util.isArray(filter)) {
     this._filter[field].push.apply(this._filter[field], filter);
@@ -223,6 +231,8 @@ Conforma.prototype.filter = function(field, filter) {
     this._filter[field].push(filter);
   } else if(typeof filter === 'object') {
     this._filter[field].push(filter);
+  } else {
+    throw new Error('Filter "'+ filter +'" not available');
   }
 
   return this;
@@ -273,7 +283,6 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
     func = key;
     key = '#' + Object.keys(this._validator[field]).length;
   } else if(typeof key === 'object') {
-
     vName = Object.keys(key)[0] + '' || null;
 
     if(vName in _validator) {
@@ -281,6 +290,8 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
       msg = key.msg || msg;
       key = vName;
     }
+  } else {
+    throw new Error('Validator "'+ key +'" not available');
   }
 
   if(func) {
@@ -316,8 +327,6 @@ Conforma.prototype._runFilter = function(dest) {
         if(fName && fName in _filter) {
           fieldValue = _filter[fName].call(_this, fieldValue, filter[fName]);
         }
-      } else {
-        throw new Error('Filter "'+ filter +'" not available');
       }
     });
 
@@ -337,9 +346,11 @@ Conforma.prototype._runFilter = function(dest) {
 Conforma.prototype.exec = function(done) {
   var _this = this, sync = [];
 
-  sync[sync.length] = Promise.try(function () {
-    _this._data = _this._runFilter(_this._data);
-  });
+  if(!this._filtered) {
+    sync[sync.length] = Promise.try(function () {
+      _this._data = _this._runFilter(_this._data);
+    });
+  }
 
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);

@@ -5,9 +5,10 @@ var assert = require('assert'),
   Conforma = conforma.Conforma;
 
 describe('Conforma.validate args check', function() {
-  it('should add validators', function(done) {
+  it('should add validators', function() {
     var formData = new Conforma();
-    formData.setData({
+
+    return formData.setData({
       value1: 'TEST',
       value2: 'TEST',
       value3: 'TEST',
@@ -18,16 +19,26 @@ describe('Conforma.validate args check', function() {
       .validate('value3', function(field, value) {
         return new conforma.ConformaValidationError(field, 'message', value);
       })
-      .validate('value4', 'unknown')
       .validate('value5', ['required', 'notEmpty'])
       .exec()
       .catch(function(err) {
-        assert.equal(2, err.errors.length);
-        assert.equal('value3', err.errors[0].field);
-        assert.equal('value5', err.errors[1].field);
-
-        done();
+        assert.equal(err.errors.length, 2);
+        assert.equal(err.errors[0].field, 'value3');
+        assert.equal(err.errors[1].field, 'value5');
       });
+  });
+
+  it('should throw error on unknown validators', function() {
+    var formData = new Conforma();
+
+    try {
+      return formData.setData({
+          value1: 'TEST',
+        })
+        .validate('value1', 'unknown');
+    } catch(err) {
+      assert.ok(err == 'Error: Validator "unknown" not available');
+    }
   });
 });
 
@@ -399,10 +410,10 @@ describe('Validators check', function() {
   });
 
   describe('equals', function() {
-    it('should equals', function(done) {
+    it('should equals', function() {
       var conforma = new Conforma();
 
-      conforma.setData({
+      return conforma.setData({
         value1: 'TEST',
         value2: 'test',
         value3: 12345,
@@ -414,10 +425,7 @@ describe('Validators check', function() {
         .validate('value3', {equals: 12345})
         .validate('value4', {equals: true})
         .validate('value5', {equals: null})
-        .exec()
-        .then(function() {
-          done();
-        });
+        .exec();
     });
 
     it('should not equals', function(done) {
