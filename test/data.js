@@ -175,7 +175,7 @@ describe('Data', function() {
         .filter('bar1', 'object')
         .filter('bar1.test', 'string')
         .conform(true)
-        .getData();
+        .getData(true);
 
       assert.strictEqual(data.child, undefined);
       assert.strictEqual(data.parent.child1, 4);

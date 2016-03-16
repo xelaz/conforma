@@ -77,7 +77,7 @@ Conforma.prototype.reset = function() {
    * @type {Boolean}
    * @private
    */
-  this._filtered = false;
+  this._conform = false;
 
   return this;
 };
@@ -150,7 +150,7 @@ Conforma.prototype.setData = function(data) {
  */
 Conforma.prototype.getData = function(clean) {
   if(clean) {
-    this._data = this._runFilter(this._data);
+    this._data = this._runFilter(this._conform && {} || this._data);
   }
 
   return _extend(true, {}, this._data);
@@ -186,22 +186,20 @@ Conforma.prototype.default = function(value) {
 };
 
 /**
- * @param {Object|true} value
+ * @param {Object|true} format
  *
  * @throws Error
  *
  * @returns {Conforma}
  */
-Conforma.prototype.conform = function(value) {
-  if(!value) {
-    throw new Error('conform empty value');
-  }
+Conforma.prototype.conform = function(format) {
 
-  if(value === true) {
-    this._filtered = true;
-    this._data = this._runFilter({});
+  if(!format) {
+    throw new Error('conform empty value');
+  } else if(format === true) {
+    this._conform = format;
   } else {
-    this._data = conform(this._data, value);
+    this._data = conform(this._data, format);
   }
 
   return this;
@@ -346,11 +344,9 @@ Conforma.prototype._runFilter = function(dest) {
 Conforma.prototype.exec = function(done) {
   var _this = this, sync = [];
 
-  if(!this._filtered) {
-    sync[sync.length] = Promise.try(function () {
-      _this._data = _this._runFilter(_this._data);
-    });
-  }
+  sync[sync.length] = Promise.try(function () {
+    _this._data = _this._runFilter(_this._conform && {} || _this._data);
+  });
 
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);
