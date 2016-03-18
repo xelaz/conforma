@@ -152,10 +152,11 @@ describe('Data', function() {
           child5: false,
           child6: null
         },
-        foo:    'bar',
-        foo1:    ['bar'],
-        bar:    null,
-        bar1:    {test: 123},
+        foo:   'bar',
+        foo1:  ['bar'],
+        foo2:  undefined,
+        bar:   null,
+        bar1:  {test: 123},
         trash: 123,
 
         fun2: function () {
@@ -171,6 +172,8 @@ describe('Data', function() {
         .filter('foo1', 'array')
         .filter('foo1.1', 'string')
         .filter('foo1.2', 'int')
+        .filter('foo2', 'array')
+        .filter('foo3', 'array')
         .filter('bar', 'object')
         .filter('bar1', 'object')
         .filter('bar1.test', 'string')
@@ -182,6 +185,8 @@ describe('Data', function() {
       assert.strictEqual(data.parent.child4, undefined);
       assert.ok(Array.isArray(data.foo));
       assert.ok(Array.isArray(data.foo1));
+      assert.ok(Array.isArray(data.foo2));
+      assert.ok(Array.isArray(data.foo3));
       assert.strictEqual(data.foo1[2], 0);
       assert.ok(data.bar !== null);
       assert.strictEqual(data.bar1.test, '123');
