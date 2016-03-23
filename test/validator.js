@@ -263,7 +263,8 @@ describe('Validators check', function() {
         value4: 1,
         value5: 'q',
         value6: true,
-        value7: function() {}
+        value7: function() {},
+        value8: new Date()
       })
         .validate('value1', 'notEmpty')
         .validate('value2', 'notEmpty')
@@ -272,6 +273,7 @@ describe('Validators check', function() {
         .validate('value5', 'notEmpty')
         .validate('value6', 'notEmpty')
         .validate('value7', 'notEmpty')
+        .validate('value8', 'notEmpty')
         .exec()
         .catch(function() {
           assert.ok(false, 'notEmpty is not compatible');
