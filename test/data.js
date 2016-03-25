@@ -161,7 +161,16 @@ describe('Data', function() {
 
         fun2: function () {
           console.log('fun');
-        }
+        },
+
+        obj: 'test',
+        obj2: {a:1},
+        obj3: {a:1},
+
+        arr: ['test'],
+        arr2: 'test',
+        arr3: ['test'],
+        arr4: {a:'test'}
       })
         .filter('parent', 'object')
         .filter('parent.child1', 'int')
@@ -177,6 +186,13 @@ describe('Data', function() {
         .filter('bar', 'object')
         .filter('bar1', 'object')
         .filter('bar1.test', 'string')
+        .filter('obj', {object: true})
+        .filter('obj2', {object: true})
+        .filter('obj3', 'object')
+        .filter('arr', {array: true})
+        .filter('arr2', {array: true})
+        .filter('arr3', 'array')
+        .filter('arr4', {array: true})
         .conform(true)
         .getData(true);
 
@@ -191,6 +207,15 @@ describe('Data', function() {
       assert.ok(data.bar !== null);
       assert.strictEqual(data.bar1.test, '123');
       assert.strictEqual(data.trash, undefined);
+      assert.ok(data.obj instanceof Object);
+      assert.ok(data.obj2 instanceof Object);
+      assert.strictEqual(Object.keys(data.obj3).length, 0);
+      assert.strictEqual(data.obj2.a, 1);
+      assert.strictEqual(data.arr.length, 1);
+      assert.strictEqual(data.arr[0], 'test');
+      assert.strictEqual(data.arr2.length, 1);
+      assert.strictEqual(data.arr2[0], 'test');
+      assert.strictEqual(data.arr3.length, 0);
     });
   });
 
