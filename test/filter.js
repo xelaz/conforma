@@ -373,7 +373,8 @@ describe('Filters check', function() {
         value7: {test: 1, test2: 'test'},
         value8: {},
         value9: function() {},
-        value10: []
+        value10: [],
+        value11: '<div>Hänsel&Gretel</div>>&"\'<'
       })
         .filter('value1', 'string')
         .filter('value2', 'string')
@@ -385,6 +386,7 @@ describe('Filters check', function() {
         .filter('value8', 'string')
         .filter('value9', 'string')
         .filter('value10', 'string')
+        .filter('value11', {string: true})
         .getData(true);
 
       assert.strictEqual('STRING', filtered.value1, 'value1 is not string');
@@ -397,6 +399,7 @@ describe('Filters check', function() {
       assert.strictEqual('[object Object]', filtered.value8, 'value8 is not string');
       assert.strictEqual('', filtered.value9, 'value9 is not string');
       assert.strictEqual('', filtered.value10, 'value10 is not string');
+      assert.strictEqual(filtered.value11, 'Hänsel&amp;Gretel&gt;&amp;&quot;\'&lt;');
     });
   });
 
