@@ -209,26 +209,30 @@ Conforma.prototype.conform = function(format) {
  *
  * @param {String}              field
  * @param {String|Array|Object} filter
+ * @param {*}                   [options]
  *
  * @returns {Conforma}
  */
-Conforma.prototype.filter = function(field, filter) {
+Conforma.prototype.filter = function(field, filter, options) {
+  var _this = this;
+
   if(!field || !filter) {
     return this;
   }
 
-  if(!this._filter.hasOwnProperty(field)) {
-    this._filter[field] = [];
-  }
-
-  if(typeof filter === 'string' && filter !== '' && filter in _filter) {
-    this._filter[field].push(filter);
+  if(typeof filter === 'string' && filter in _filter) {
+    this._filter.push({field: field, filter: function(value) {
+      return _filter[filter].call(_this, value, options);
+    }});
   } else if(util.isArray(filter)) {
-    this._filter[field].push.apply(this._filter[field], filter);
+    filter.forEach(function(val) {
+      _this.filter(field, val);
+    });
   } else if(typeof filter === 'function') {
-    this._filter[field].push(filter);
+    this._filter.push({field: field, filter: filter});
   } else if(typeof filter === 'object') {
-    this._filter[field].push(filter);
+    var fName = Object.keys(filter).pop();
+    this.filter(field, fName, filter[fName]);
   } else {
     throw new Error('Filter "'+ filter +'" not available');
   }
@@ -311,24 +315,16 @@ Conforma.prototype._runFilter = function(dest) {
   var _this = this;
   this._rawData = this._data;
 
-  Object.keys(this._filter).forEach(function(field) {
-    var fieldValue = _this.getValue(field);
+  this._filter.forEach(function(entry) {
+    var fieldValue = _this.getValue(entry.field);
 
-    _this._filter[field].forEach(function (filter) {
-      if (typeof filter === 'function') {
-        fieldValue = filter.call(_this, fieldValue);
-      } else if (typeof filter === 'string' && filter in _filter) {
-        fieldValue = _filter[filter].call(_this, fieldValue);
-      } else if(typeof filter === 'object') {
-        var fName = Object.keys(filter).pop() || null;
+    if (typeof entry.filter === 'function') {
+      fieldValue = entry.filter.call(_this, fieldValue);
+    } else if (typeof entry.filter === 'string') {
+      fieldValue = _filter[entry.filter].call(_this, fieldValue);
+    }
 
-        if(fName && fName in _filter) {
-          fieldValue = _filter[fName].call(_this, fieldValue, filter[fName]);
-        }
-      }
-    });
-
-    mpath.set(field, fieldValue, dest);
+    mpath.set(entry.field, fieldValue, dest);
   });
 
   return dest;

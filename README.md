@@ -1,5 +1,5 @@
 # [![Build Status](https://travis-ci.org/xelaz/conforma.svg?branch=master)](https://travis-ci.org/xelaz/conforma) conforma
-Filter, validate and conform your data from POST request data in Express
+Filter, validate and conform your data from POST request data in Express or other environment.
 
 ## Install
 npm install conforma --save
@@ -83,7 +83,7 @@ If your data is valid, then you get the filtered and validated data:
     }
 ```
 
-### Use with Promise
+### Use with Promise (bluebird)
 
 ```javascript
     var conforma = require('conforma');
@@ -110,13 +110,59 @@ If your data is valid, then you get the filtered and validated data:
 
     var conforma = require('conforma');
     var formData = new conforma.Conforma();
-
+    
     formData.setData({
       value1: '123',
       value2: 'yes'
     })
-      .filter('value1', 'int')
-      .filter('value2', 'bool')
+      .filter('value1', function(value) {
+          return Number(value);
+        })
+      .filter('value2', function(value) {
+          return Boolean(value);
+        })
+      .exec()
+      .then(function(data) {
+        // ...
+      })
+      .catch(function(error) {
+        // ...
+      });
+```
+
+### Use without new
+
+```javascript
+
+    var conforma = require('conforma');
+
+    conforma.Conforma({
+      value1: '123',
+      value2: 'yes'
+    })
+      .filter(...)
+      .validate(...)
+      .exec()
+      .then(function(data) {
+        // ...
+      })
+      .catch(function(error) {
+        // ...
+      });
+```
+
+### Use in ES6 Style
+
+```javascript
+
+    import {Conforma} from 'conforma';
+
+    Conforma({
+      value1: '123',
+      value2: 'yes'
+    })
+      .filter(...)
+      .validate(...)
       .exec()
       .then(function(data) {
         // ...
@@ -130,18 +176,24 @@ If your data is valid, then you get the filtered and validated data:
 ## API
 * setData(object)
 * getData(filtered)
-* filter(path, filter)
+* filter(path, filter, options)
 * validate(path, validator)
 * move(srcPath, destPath)
 * remove(path)
 * exec(callback) return Promise
 * reset
+* mount(<Conforma>)
 
 ## Filter
+
+With Filter you can transform your data to your valid format
+
 * int
 * float
 * bool
+* digit
 * string
+* stringLength
 * trim whitespaces
 * lowerCase
 * upperCase
@@ -151,6 +203,8 @@ If your data is valid, then you get the filtered and validated data:
 * email
 * url [node url object keys]
 * date [moment format]
+* object
+* array
 
 ## Validator
 * required
