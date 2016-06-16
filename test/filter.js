@@ -227,7 +227,7 @@ describe('Filters check', function() {
     });
   });
 
-  describe('addslashes', function() {
+  describe('addSlashes', function() {
     it('value must be float', function() {
       var conforma = new Conforma();
       var filtered = conforma.setData({
@@ -235,9 +235,9 @@ describe('Filters check', function() {
         value2:'Lorem ipsum\' dolo\'r sit amet',
         value3:'Lorem"ipsum\' dolo\'r sit"amet'
       })
-        .filter('value1', 'addslashes')
-        .filter('value2', 'addslashes')
-        .filter('value3', 'addslashes')
+        .filter('value1', 'addSlashes')
+        .filter('value2', 'addSlashes')
+        .filter('value3', 'addSlashes')
         .getData(true);
 
       assert.equal('Lorem ipsum\\" dolo\\"r sit amet', filtered.value1, 'value1 is not escaped with slashes');

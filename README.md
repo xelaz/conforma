@@ -198,7 +198,7 @@ With Filter you can transform your data to your valid format
 * lowerCase
 * upperCase
 * escapeHtml (<>"'& to entities)
-* addslashes (like php)
+* addSlashes (like php)
 * stripHtml (sanitize all html content)
 * email
 * url [node url object keys]
