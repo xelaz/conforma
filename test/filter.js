@@ -307,16 +307,20 @@ describe('Filters check', function() {
       var filtered = Conforma({
         value1: 'TEST@maIL.Com',
         value2: '!§$%&email+12345-!§$%&@this is host,.com',
-        value3: '!§$%&üm-äil.12345-all@googlemail.com'
+        value3: '_!§$%&üm-äil._12345-all_@googlemail.com',
+        value4: '_!§$%&üm-äil._12345-all_@hot-mail.com'
       })
         .filter('value1', 'email')
         .filter('value2', 'email')
         .filter('value3', 'email')
+        .filter('value4', 'email')
         .getData(true);
 
       assert.equal('test@mail.com', filtered.value1, 'value1 is not valid mail');
       assert.equal('email12345-@thisishost.com', filtered.value2, 'value2 is not valid mail');
-      assert.equal('üm-äil.12345-all@gmail.com', filtered.value3, 'value3 is not valid mail');
+      assert.equal('_üm-äil._12345-all_@gmail.com', filtered.value3, 'value3 is not valid mail');
+      assert.equal('_üm-äil._12345-all_@gmail.com', filtered.value3, 'value3 is not valid mail');
+      assert.equal('_üm-äil._12345-all_@hot-mail.com', filtered.value4, 'value4 is not valid mail');
     });
   });
 
