@@ -205,6 +205,7 @@ With Filter you can transform your data to your valid format
 * date [moment format]
 * object
 * array
+* null
 
 ## Validator
 * required

@@ -453,4 +453,20 @@ describe('Filters check', function() {
       assert.equal(filtered.value4, '', 'value4 invalid date');
     });
   });
+
+  describe('function', function() {
+
+    it('should convert to valid date', function() {
+      var filtered = Conforma({
+        value1: 2015,
+        value2: 5
+      })
+        .filter('value1', function(value) {return value + 10})
+        .filter('value2', function(value) {return String(value)})
+        .getData(true);
+
+      assert.strictEqual(filtered.value1, 2025);
+      assert.strictEqual(filtered.value2, '5');
+    });
+  });
 });

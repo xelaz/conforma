@@ -316,15 +316,10 @@ Conforma.prototype._runFilter = function(dest) {
   this._rawData = this._data;
 
   this._filter.forEach(function(entry) {
-    var fieldValue = _this.getValue(entry.field);
+    var orgVal = mpath.get(entry.field, _this._data);
+    var val = mpath.get(entry.field, dest);
 
-    if (typeof entry.filter === 'function') {
-      fieldValue = entry.filter.call(_this, fieldValue);
-    } else if (typeof entry.filter === 'string') {
-      fieldValue = _filter[entry.filter].call(_this, fieldValue);
-    }
-
-    mpath.set(entry.field, fieldValue, dest);
+    mpath.set(entry.field, entry.filter.call(_this, val === undefined ? orgVal : val ), dest);
   });
 
   return dest;
