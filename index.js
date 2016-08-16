@@ -484,6 +484,9 @@ module.exports.Conforma = Conforma;
 /** @type {ConformaFilter} */
 module.exports.ConformaFilter = _filter;
 
+/** @type {ConformaValidator} */
+module.exports.ConformaValidator = _validator;
+
 /** @type {ConformaError} */
 module.exports.ConformaError = ConformaError;
 
