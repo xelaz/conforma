@@ -38,32 +38,32 @@ Conforma.prototype.reset = function() {
    * @type {Array}
    * @private
    */
-  this._filter    = [];
+  this._filter = {};
 
   /**
    * @type {Array}
    * @private
    */
-  this._validator = [];
+  this._validator = {};
 
   /**
    * @type {Object}
    * @private
    */
-  this._msg  = {};
+  this._msg = {};
 
   /**
    * @type {{}}
    * @private
    */
-  this._data      = {};
+  this._data = {};
 
   /**
    *
    * @type {Object|null}
    * @private
    */
-  this._rawData   = null;
+  this._rawData = {};
 
   /**
    *
@@ -135,7 +135,8 @@ Conforma.prototype.remove = function(srcPath) {
  * @returns {Conforma}
  */
 Conforma.prototype.setData = function(data) {
-  this._data = _extend(true, this._data, data || {});
+  this._rawData = _extend(true, {}, this._rawData, data || {});
+  this._data = _extend(true, {}, this._data, data || {});
 
   return this;
 };
@@ -150,7 +151,7 @@ Conforma.prototype.setData = function(data) {
  */
 Conforma.prototype.getData = function(clean) {
   if(clean) {
-    this._data = this._runFilter(this._conform && {} || this._data);
+    this._runFilter();
   }
 
   return _extend(true, {}, this._data);
@@ -186,20 +187,20 @@ Conforma.prototype.default = function(value) {
 };
 
 /**
- * @param {Object|true} format
+ * @param {Object|Boolean} [data]
  *
  * @throws Error
  *
  * @returns {Conforma}
  */
-Conforma.prototype.conform = function(format) {
+Conforma.prototype.conform = function(data) {
 
-  if(!format) {
-    throw new Error('conform empty value');
-  } else if(format === true) {
-    this._conform = format;
+  if(!data) {
+    throw new Error('conform empty "data" value');
+  } else if(data === true) {
+    this._data = {};
   } else {
-    this._data = conform(this._data, format);
+    this._data = conform(this._rawData, data);
   }
 
   return this;
@@ -220,16 +221,20 @@ Conforma.prototype.filter = function(field, filter, options) {
     return this;
   }
 
+  if(!this._filter.hasOwnProperty(field)) {
+    this._filter[field] = [];
+  }
+
   if(typeof filter === 'string' && filter in _filter) {
-    this._filter.push({field: field, filter: function(value) {
+    this._filter[field].push(function(value) {
       return _filter[filter].call(_this, value, options);
-    }});
+    });
   } else if(util.isArray(filter)) {
     filter.forEach(function(val) {
       _this.filter(field, val);
     });
   } else if(typeof filter === 'function') {
-    this._filter.push({field: field, filter: filter});
+    this._filter[field].push(filter);
   } else if(typeof filter === 'object') {
     var fName = Object.keys(filter).pop();
     this.filter(field, fName, filter[fName]);
@@ -311,18 +316,27 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
  *
  * @private
  */
-Conforma.prototype._runFilter = function(dest) {
+Conforma.prototype._runFilter = function() {
   var _this = this;
-  this._rawData = this._data;
 
-  this._filter.forEach(function(entry) {
-    var orgVal = mpath.get(entry.field, _this._data);
-    var val = mpath.get(entry.field, dest);
+  Object.keys(this._filter).forEach(function(field) {
+    var orgValue = mpath.get(field, _this._rawData);
+    var newValue = mpath.get(field, _this._data);
 
-    mpath.set(entry.field, entry.filter.call(_this, val === undefined ? orgVal : val ), dest);
+    if(orgValue === undefined && newValue !== undefined) {
+      mpath.set(field, newValue, _this._data);
+    } else {
+      mpath.set(field, orgValue, _this._data);
+    }
+
+    _this._filter[field].forEach(function(filter) {
+      mpath.set(
+        field,
+        filter.call(_this, mpath.get(field, _this._data)),
+        _this._data
+      );
+    });
   });
-
-  return dest;
 };
 
 /**
@@ -336,7 +350,7 @@ Conforma.prototype.exec = function(done) {
   var _this = this, sync = [];
 
   sync[sync.length] = Promise.try(function () {
-    _this._data = _this._runFilter(_this._conform && {} || _this._data);
+    _this._runFilter();
   });
 
   Object.keys(this._validator).forEach(function(field) {
@@ -413,7 +427,7 @@ Conforma.prototype.exec = function(done) {
  */
 Conforma.prototype.mount = function() {
   var _this = this;
-  return this.exec().then(function(data) {
+  return this.exec().then(function() {
     if(_this._namespace) {
       var o = {};
       // TODO: complex nesting

@@ -206,6 +206,7 @@ With Filter you can transform your data to your valid format
 * object
 * array
 * null
+* uniqueList
 
 ## Validator
 * required

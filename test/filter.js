@@ -20,7 +20,7 @@ describe('Conforma.filter args check', function() {
         return value + 'TEST';
       })
       .filter('value4', 'int')
-      .filter('value5', ['lowerCase', 'stringLength', {stringLength: 3}])
+      .filter('value5', ['lowerCase', {stringLength: 3}])
       .filter('value6', {stringLength: 2})
       .filter('value7', ['string', 'lowerCase'])
       .getData(true);
@@ -467,6 +467,19 @@ describe('Filters check', function() {
 
       assert.strictEqual(filtered.value1, 2025);
       assert.strictEqual(filtered.value2, '5');
+    });
+  });
+
+  describe('uniqueList', function() {
+
+    it('should return unique values in array', function() {
+      var filtered = Conforma({
+        value1: ['123', '123', 123, 'foo', 'bar', 'foo']
+      })
+        .filter('value1', 'uniqueList')
+        .getData(true);
+
+      assert.strictEqual(filtered.value1.length, 4);
     });
   });
 });
