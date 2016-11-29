@@ -200,6 +200,7 @@ With Filter you can transform your data to your valid format
 * escapeHtml (<>"'& to entities)
 * addSlashes (like php)
 * stripHtml (sanitize all html content)
+* stripHtmlTags
 * email
 * url [node url object keys]
 * date [moment format]

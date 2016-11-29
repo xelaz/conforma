@@ -570,4 +570,20 @@ describe('Filters check', function() {
       assert.strictEqual(filtered.value1.length, 4);
     });
   });
+
+  describe('stripHtmlTags', function() {
+
+    it('should return  Html Tags from string', function() {
+      var filtered = Conforma({
+        value1: '<div class="my-class">tag</div>',
+        value2: 'before <div name="foo">tag</div> after'
+      })
+        .filter('value1', 'stripHtmlTags')
+        .filter('value2', 'stripHtmlTags')
+        .getData(true);
+
+      assert.strictEqual(filtered.value1, 'tag');
+      assert.strictEqual(filtered.value2, 'before tag after');
+    });
+  });
 });
