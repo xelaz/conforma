@@ -470,6 +470,94 @@ describe('Filters check', function() {
     });
   });
 
+  describe('object', function() {
+    it('should return object', function() {
+      var filtered = Conforma({
+        value1: 'string',
+        value2: '{}',
+        value3: '{foo: "bar"}',
+        value4: '{"foo": "bar"}',
+        value5: {foo: 'bar'},
+        value6: function() {},
+        value7: true,
+        value8: 12345,
+        value9: null,
+        value10: undefined
+      })
+        .filter('value1', 'object')
+        .filter('value2', 'object')
+        .filter('value3', 'object')
+        .filter('value4', 'object')
+        .filter('value5', 'object')
+        .filter('value6', 'object')
+        .filter('value7', 'object')
+        .filter('value8', 'object')
+        .filter('value9', 'object')
+        .filter('value10', 'object')
+        .getData(true);
+
+      assert.strictEqual(typeof filtered.value1, 'object');
+      assert.strictEqual(typeof filtered.value2, 'object');
+      assert.strictEqual(typeof filtered.value3, 'object');
+      assert.strictEqual(typeof filtered.value4, 'object');
+      assert.strictEqual(typeof filtered.value5, 'object');
+      assert.strictEqual(typeof filtered.value6, 'object');
+      assert.strictEqual(typeof filtered.value7, 'object');
+      assert.strictEqual(typeof filtered.value8, 'object');
+      assert.strictEqual(typeof filtered.value9, 'object');
+      assert.strictEqual(typeof filtered.value10, 'object');
+    });
+
+    it('should return object copy or empty object', function() {
+      var filtered = Conforma({
+        value1: 'string',
+        value2: '{}',
+        value3: '{foo: "bar"}',
+        value4: '{"foo": "bar"}',
+        value5: {foo: 'bar'},
+        value6: function() {},
+        value7: true,
+        value8: 12345,
+        value9: null,
+        value10: undefined
+      })
+        .filter('value1', {object: true})
+        .filter('value2', {object: true})
+        .filter('value3', {object: true})
+        .filter('value4', {object: true})
+        .filter('value5', {object: true})
+        .filter('value6', {object: true})
+        .filter('value7', {object: true})
+        .filter('value8', {object: true})
+        .filter('value9', {object: true})
+        .filter('value10', {object: true})
+        .getData(true);
+
+      assert.strictEqual(typeof filtered.value1, 'object');
+      assert.strictEqual(typeof filtered.value2, 'object');
+      assert.strictEqual(typeof filtered.value3, 'object');
+      assert.strictEqual(typeof filtered.value4, 'object');
+      assert.strictEqual(typeof filtered.value5, 'object');
+      assert.strictEqual(typeof filtered.value6, 'object');
+      assert.strictEqual(typeof filtered.value7, 'object');
+      assert.strictEqual(typeof filtered.value8, 'object');
+      assert.strictEqual(typeof filtered.value9, 'object');
+      assert.strictEqual(typeof filtered.value10, 'object');
+
+      assert.strictEqual(Object.keys(filtered.value1).length, 0);
+      assert.strictEqual(Object.keys(filtered.value2).length, 0);
+      assert.strictEqual(Object.keys(filtered.value3).length, 0);
+      assert.strictEqual(Object.keys(filtered.value6).length, 0);
+      assert.strictEqual(Object.keys(filtered.value7).length, 0);
+      assert.strictEqual(Object.keys(filtered.value8).length, 0);
+      assert.strictEqual(Object.keys(filtered.value9).length, 0);
+      assert.strictEqual(Object.keys(filtered.value10).length, 0);
+
+      assert.strictEqual(filtered.value4.foo, 'bar');
+      assert.strictEqual(filtered.value5.foo, 'bar');
+    });
+  });
+
   describe('uniqueList', function() {
 
     it('should return unique values in array', function() {
