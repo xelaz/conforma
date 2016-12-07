@@ -72,13 +72,6 @@ Conforma.prototype.reset = function() {
    */
   this._namespace = null;
 
-  /**
-   *
-   * @type {Boolean}
-   * @private
-   */
-  this._conform = false;
-
   return this;
 };
 
@@ -198,6 +191,7 @@ Conforma.prototype.conform = function(data) {
   if(!data) {
     throw new Error('conform empty "data" value');
   } else if(data === true) {
+    this._rawData = _extend(true, {}, this._data);
     this._data = {};
   } else {
     this._data = conform(this._rawData, data);
