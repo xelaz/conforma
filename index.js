@@ -72,6 +72,13 @@ Conforma.prototype.reset = function() {
    */
   this._namespace = null;
 
+  /**
+   *
+   * @type {boolean}
+   * @private
+   */
+  this._conform = false;
+
   return this;
 };
 
@@ -188,11 +195,10 @@ Conforma.prototype.default = function(value) {
  */
 Conforma.prototype.conform = function(data) {
 
-  if(!data) {
+  if(typeof data === 'boolean') {
+    this._conform = data;
+  } else if(!data) {
     throw new Error('conform empty "data" value');
-  } else if(data === true) {
-    this._rawData = _extend(true, {}, this._data);
-    this._data = {};
   } else {
     this._data = conform(this._rawData, data);
   }
@@ -312,6 +318,11 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
  */
 Conforma.prototype._runFilter = function() {
   var _this = this;
+
+  if(this._conform) {
+    this._rawData = _extend(true, {}, this._data);
+    this._data = {};
+  }
 
   Object.keys(this._filter).forEach(function(field) {
     var orgValue = mpath.get(field, _this._rawData);
