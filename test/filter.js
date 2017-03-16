@@ -439,18 +439,21 @@ describe('Filters check', function() {
         value1: '2015',
         value2: '2015-12-23',
         value3: '12.12.2015',
-        value4: ''
+        value4: '',
+        value5: '123abra'
       })
         .filter('value1', {date: 'YYYY'})
         .filter('value2', {date: 'YYYY-MM-DD'})
         .filter('value3', {date: 'DD.MM.YYYY'})
         .filter('value4', {date: 'DD.MM.YYYY'})
+        .filter('value5', {date: 'DD.MM.YYYY'})
         .getData(true);
 
       assert.strictEqual(filtered.value1.getFullYear(), 2015, 'value1 invalid date');
       assert.strictEqual(filtered.value2.getDate(), 23, 'value2 invalid date');
       assert.strictEqual(filtered.value3.getMonth(), 11, 'value3 invalid date');
       assert.equal(filtered.value4, '', 'value4 invalid date');
+      assert.equal(filtered.value5, 'Invalid Date', 'value5 invalid date');
     });
   });
 
