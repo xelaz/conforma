@@ -34,14 +34,15 @@ var Conforma = function(data) {
  * @returns {Conforma}
  */
 Conforma.prototype.reset = function() {
+
   /**
-   * @type {Array}
+   * @type {Object}
    * @private
    */
   this._filter = {};
 
   /**
-   * @type {Array}
+   * @type {Object}
    * @private
    */
   this._validator = {};
@@ -64,6 +65,12 @@ Conforma.prototype.reset = function() {
    * @private
    */
   this._rawData = {};
+
+  /**
+   * @type {Array}
+   * @private
+   */
+  this._drop = [];
 
   /**
    *
@@ -342,6 +349,26 @@ Conforma.prototype._runFilter = function() {
       );
     });
   });
+
+  this._drop
+    .filter(function(n) {return n && n})
+    .map(function(n) {return String(n).trim()})
+    .forEach(this.remove.bind(_this));
+};
+
+/**
+ * Add Drop Data
+ *
+ * @public
+ *
+ * @returns {Conforma}
+ */
+Conforma.prototype.drop = function(src) {
+  this._drop = this._drop.concat((arguments.length === 1 && typeof src === 'string') ? src.split(',')
+    : Array.isArray(src) ? src
+      : Array.prototype.slice.call(arguments));
+
+  return this;
 };
 
 /**

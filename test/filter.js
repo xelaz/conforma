@@ -589,4 +589,29 @@ describe('Filters check', function() {
       assert.strictEqual(filtered.value2, 'before tag after');
     });
   });
+
+  describe('drop', function() {
+
+    it('should return object after drop nodes', function() {
+      var filtered = Conforma()
+        .filter('value1', 'object')
+        .filter('value1.child', 'string')
+        .filter('value2', 'string')
+        .filter('value3', 'object')
+        .filter('value3.child', 'string')
+        .filter('value3.child2', 'string')
+        .filter('value3.child3', 'string')
+        .drop('value1.child, value2')
+        .drop('value3.child', 'value3.child3')
+        .getData(true);
+
+      assert.strictEqual(typeof filtered.value1, 'object');
+      assert.strictEqual(filtered.value1.child, undefined);
+      assert.strictEqual(typeof filtered.value3.child2, 'string');
+      assert.strictEqual(filtered.value2, undefined);
+      assert.strictEqual(filtered.value3.child, undefined);
+      assert.strictEqual(filtered.value3.child3, undefined);
+      //assert.strictEqual(filtered.value2, 'before tag after');
+    });
+  });
 });
