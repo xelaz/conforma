@@ -3,8 +3,8 @@
 var assert = require("assert"),
   Conforma = require('../index').Conforma;
 
-describe('Conforma.filter args check', function() {
-  it('should add filter', function() {
+describe('Conforma.filter args check', function () {
+  it('should add filter', function () {
     var formData = new Conforma();
     var filteredData = formData.setData({
       value1: 123,
@@ -16,7 +16,7 @@ describe('Conforma.filter args check', function() {
     })
       .filter('value1', 'string')
       .filter('value2', ['string', 'lowerCase'])
-      .filter('value3', function(value) {
+      .filter('value3', function (value) {
         return value + 'TEST';
       })
       .filter('value4', 'int')
@@ -34,27 +34,27 @@ describe('Conforma.filter args check', function() {
     assert.equal(filteredData.value7, '');
   });
 
-  it('should throw error on unknown filter', function() {
+  it('should throw error on unknown filter', function () {
     var formData = new Conforma();
     try {
       return formData.setData({
-          value1: 123
-        })
+        value1: 123
+      })
         .filter('value1', 'unknown')
         .exec();
-    } catch(err) {
+    } catch (err) {
       assert.ok(err == 'Error: Filter "unknown" not available');
     }
   });
 
-  it('should throw error on unknown filter if getData', function() {
+  it('should throw error on unknown filter if getData', function () {
     try {
       Conforma({
-          value1: 123
-        })
+        value1: 123
+      })
         .filter('value1', 'unknown')
         .getData(true);
-    } catch(err) {
+    } catch (err) {
       assert.ok(err == 'Error: Filter "unknown" not available');
       return;
     }
@@ -63,18 +63,18 @@ describe('Conforma.filter args check', function() {
   });
 });
 
-describe('Filters check', function() {
-
-  describe('trim', function() {
-    it('should without spaces at prefix and suffix', function() {
+describe('Filters check', function () {
+  describe('trim', function () {
+    it('should without spaces at prefix and suffix', function () {
       var conforma = new Conforma();
       var filtered = conforma.setData({
-        value1:' test ',
-        value2:'test    ',
+        value1: ' test ',
+        value2: 'test    ',
         value3: ' test',
         value4: {
           value1: ' test '
-        }})
+        }
+      })
         .filter('value1', 'trim')
         .filter('value2', 'trim')
         .filter('value3', 'trim')
@@ -88,8 +88,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('digit', function() {
-    it('value must be digit', function() {
+  describe('digit', function () {
+    it('value must be digit', function () {
       var conforma = new Conforma();
       var filtered = conforma.setData({
         value1: '123',
@@ -139,8 +139,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('int', function() {
-    it('value must be integer', function() {
+  describe('int', function () {
+    it('value must be integer', function () {
       var conforma = new Conforma();
       var filtered = conforma.setData({
         value1: '123',
@@ -187,17 +187,17 @@ describe('Filters check', function() {
     });
   });
 
-  describe('float', function() {
-    it('value must be float', function() {
+  describe('float', function () {
+    it('value must be float', function () {
       var conforma = new Conforma();
       var filtered = conforma.setData({
-        value1:'123',
-        value2:123,
-        value3:true,
-        value4:false,
-        value5:null,
-        value6:2.51,
-        value7:undefined,
+        value1: '123',
+        value2: 123,
+        value3: true,
+        value4: false,
+        value5: null,
+        value6: 2.51,
+        value7: undefined,
         value8: 'abc',
         value9: '',
         value10: '1.234'
@@ -227,13 +227,13 @@ describe('Filters check', function() {
     });
   });
 
-  describe('addSlashes', function() {
-    it('value must be float', function() {
+  describe('addSlashes', function () {
+    it('value must be float', function () {
       var conforma = new Conforma();
       var filtered = conforma.setData({
-        value1:'Lorem ipsum" dolo"r sit amet',
-        value2:'Lorem ipsum\' dolo\'r sit amet',
-        value3:'Lorem"ipsum\' dolo\'r sit"amet'
+        value1: 'Lorem ipsum" dolo"r sit amet',
+        value2: 'Lorem ipsum\' dolo\'r sit amet',
+        value3: 'Lorem"ipsum\' dolo\'r sit"amet'
       })
         .filter('value1', 'addSlashes')
         .filter('value2', 'addSlashes')
@@ -246,26 +246,26 @@ describe('Filters check', function() {
     });
   });
 
-  describe('bool', function() {
-    it('value must be boolean', function() {
+  describe('bool', function () {
+    it('value must be boolean', function () {
       var conforma = new Conforma();
       /** @type {Conforma} */
       var filtered = conforma.setData({
-        value1:'YES',
-        value2:'yes',
-        value3:'1',
-        value4:'0',
-        value5:'on',
-        value6:'false',
-        value7:false,
-        value8:null,
-        value9:1,
-        value10:2,
-        value11:0,
-        value12:undefined,
-        value13:' ',
-        value14:'',
-        value15:'abc'
+        value1: 'YES',
+        value2: 'yes',
+        value3: '1',
+        value4: '0',
+        value5: 'on',
+        value6: 'false',
+        value7: false,
+        value8: null,
+        value9: 1,
+        value10: 2,
+        value11: 0,
+        value12: undefined,
+        value13: ' ',
+        value14: '',
+        value15: 'abc'
       })
         .filter('value1', 'bool')
         .filter('value2', 'bool')
@@ -302,8 +302,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('email', function() {
-    it('should normalize email', function() {
+  describe('email', function () {
+    it('should normalize email', function () {
       var filtered = Conforma({
         value1: 'TEST@maIL.Com',
         value2: '!§$%&email+12345-!§$%&@this is host,.com',
@@ -324,13 +324,13 @@ describe('Filters check', function() {
     });
   });
 
-  describe('stringLength', function() {
-    it('should allowed length', function() {
+  describe('stringLength', function () {
+    it('should allowed length', function () {
       var filtered = Conforma({
         value1: 'String length without max param.',
-        value2:'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonümy eirmod tempor invidunt ut '
-              +'labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores '
-              +'et ea rebum. Stet clita kasd gubergren, nö sea takimata sanctus est Lorem ipsum dolor sit ämet.'
+        value2: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonümy eirmod tempor invidunt ut '
+        + 'labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores '
+        + 'et ea rebum. Stet clita kasd gubergren, nö sea takimata sanctus est Lorem ipsum dolor sit ämet.'
       })
         .filter('value1', 'stringLength')
         .filter('value2', {stringLength: 128})
@@ -341,10 +341,10 @@ describe('Filters check', function() {
     });
   });
 
-  describe('lowerCase', function() {
-    it('value must be in lower case', function() {
+  describe('lowerCase', function () {
+    it('value must be in lower case', function () {
       var filtered = Conforma({
-        value1:'LoreM IpsuM'
+        value1: 'LoreM IpsuM'
       })
         .filter('value1', 'lowerCase')
         .getData(true);
@@ -353,10 +353,10 @@ describe('Filters check', function() {
     });
   });
 
-  describe('upperCase', function() {
-    it('value must be in upper case', function() {
+  describe('upperCase', function () {
+    it('value must be in upper case', function () {
       var filtered = Conforma({
-        value1:'lorem IpsuM'
+        value1: 'lorem IpsuM'
       })
         .filter('value1', 'upperCase')
         .getData(true);
@@ -365,18 +365,19 @@ describe('Filters check', function() {
     });
   });
 
-  describe('string', function() {
-    it('value must be a string', function() {
+  describe('string', function () {
+    it('value must be a string', function () {
       var filtered = Conforma({
         value1: 'STRING',
         value2: 12345,
         value3: null,
         value4: undefined,
-        value5: [1,2,3],
+        value5: [1, 2, 3],
         value6: false,
         value7: {test: 1, test2: 'test'},
         value8: {},
-        value9: function() {},
+        value9: function () {
+        },
         value10: [],
         value11: '<div>Hänsel&Gretel</div>>&"\'<'
       })
@@ -407,9 +408,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('url', function() {
-
-    it('should convert to valid url', function() {
+  describe('url', function () {
+    it('should convert to valid url', function () {
       var filtered = Conforma({
         value1: 'http://www.github.com',
         value2: 'github.com',
@@ -419,7 +419,7 @@ describe('Filters check', function() {
       })
         .filter('value1', 'url')
         .filter('value2', 'url')
-        .filter('value3', {url: { allowedFields: ['protocol', 'hostname']}})
+        .filter('value3', {url: {allowedFields: ['protocol', 'hostname']}})
         .filter('value4', 'url')
         .filter('value5', 'url')
         .getData(true);
@@ -432,9 +432,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('date', function() {
-
-    it('should convert to valid date', function() {
+  describe('date', function () {
+    it('should convert to valid date', function () {
       var filtered = Conforma({
         value1: '2015',
         value2: '2015-12-23',
@@ -457,15 +456,18 @@ describe('Filters check', function() {
     });
   });
 
-  describe('function', function() {
-
-    it('should convert to valid date', function() {
+  describe('function', function () {
+    it('should convert to valid date', function () {
       var filtered = Conforma({
         value1: 2015,
         value2: 5
       })
-        .filter('value1', function(value) {return value + 10})
-        .filter('value2', function(value) {return String(value)})
+        .filter('value1', function (value) {
+          return value + 10
+        })
+        .filter('value2', function (value) {
+          return String(value)
+        })
         .getData(true);
 
       assert.strictEqual(filtered.value1, 2025);
@@ -473,15 +475,16 @@ describe('Filters check', function() {
     });
   });
 
-  describe('object', function() {
-    it('should return object', function() {
+  describe('object', function () {
+    it('should return object', function () {
       var filtered = Conforma({
         value1: 'string',
         value2: '{}',
         value3: '{foo: "bar"}',
         value4: '{"foo": "bar"}',
         value5: {foo: 'bar'},
-        value6: function() {},
+        value6: function () {
+        },
         value7: true,
         value8: 12345,
         value9: null,
@@ -511,14 +514,14 @@ describe('Filters check', function() {
       assert.strictEqual(typeof filtered.value10, 'object');
     });
 
-    it('should return object copy or empty object', function() {
+    it('should return object copy or empty object', function () {
       var filtered = Conforma({
         value1: 'string',
         value2: '{}',
         value3: '{foo: "bar"}',
         value4: '{"foo": "bar"}',
         value5: {foo: 'bar'},
-        value6: function() {},
+        value6: function () {},
         value7: true,
         value8: 12345,
         value9: null,
@@ -561,9 +564,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('uniqueList', function() {
-
-    it('should return unique values in array', function() {
+  describe('uniqueList', function () {
+    it('should return unique values in array', function () {
       var filtered = Conforma({
         value1: ['123', '123', 123, 'foo', 'bar', 'foo']
       })
@@ -574,9 +576,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('stripHtmlTags', function() {
-
-    it('should return  Html Tags from string', function() {
+  describe('stripHtmlTags', function () {
+    it('should return  Html Tags from string', function () {
       var filtered = Conforma({
         value1: '<div class="my-class">tag</div>',
         value2: 'before <div name="foo">tag</div> after'
@@ -590,9 +591,8 @@ describe('Filters check', function() {
     });
   });
 
-  describe('drop', function() {
-
-    it('should return object after drop nodes', function() {
+  describe('drop', function () {
+    it('should return object after drop nodes', function () {
       var filtered = Conforma()
         .filter('value1', 'object')
         .filter('value1.child', 'string')
