@@ -304,8 +304,6 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
       msg = key.msg || msg;
       key = vName;
     }
-  } else {
-    throw new Error('Validator "'+ key +'" not available');
   }
 
   if(func) {
@@ -315,6 +313,8 @@ Conforma.prototype._applyValidator = function (field, key, msg) {
 
     this._msg[field + key] = msg;
     this._validator[field][key][this._validator[field][key].length] = func;
+  } else {
+    throw Error('Validator "'+ (vName || key) +'" is not available');
   }
 };
 
@@ -381,10 +381,12 @@ Conforma.prototype.drop = function(src) {
 Conforma.prototype.exec = function(done) {
   var _this = this, sync = [];
 
+  // add first promise with filter
   sync[sync.length] = Promise.try(function () {
     _this._runFilter();
   });
 
+  // append all validator promises
   Object.keys(this._validator).forEach(function(field) {
     var val = _this.getValue(field);
     var validators = _this._validator[field];
@@ -404,7 +406,7 @@ Conforma.prototype.exec = function(done) {
       Object.keys(validators).map(function(validator) {
         validators[validator].map(function(v) {
           sync[sync.length] = Promise.try(function () {
-            return v.call(_this, extendedField, val, _this._msg[field+validator]);
+            return v.call(_this, extendedField, val, _this._msg[field + validator]);
           });
         });
       });

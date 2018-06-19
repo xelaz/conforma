@@ -33,11 +33,12 @@ describe('Conforma.validate args check', function() {
 
     try {
       return formData.setData({
-          value1: 'TEST',
+          value1: 'TEST'
         })
-        .validate('value1', 'unknown');
+        .validate('value1', 'unknown')
+        .validate('value1', { unknown: true });
     } catch(err) {
-      assert.ok(err == 'Error: Validator "unknown" not available');
+      assert.ok(err == 'Error: Validator "unknown" is not available');
     }
   });
 });
@@ -337,12 +338,12 @@ describe('Validators check', function() {
 
   describe('emailMx', function() {
     it('should be error on unknown host', function (done) {
-      this.timeout(5000);
+      this.timeout(6000);
 
       var conforma = new Conforma();
       conforma.setData({
         value1: 'unknownmail@abrakadabrahost.com',
-        value2: 'unknownmail'
+        value2: 'unknownmail@mail'
       })
         .validate('value1', 'emailMx')
         .validate('value2', 'emailMx')
@@ -366,15 +367,13 @@ describe('Validators check', function() {
 
       var conforma = new Conforma();
       conforma.setData({
-        value1: 'no-reply@gmail.com',
-        value2: 'no-reply@hotmail.com'
+        value1: 'no.reply@gmail.com',
+        value2: 'no.reply@hotmail.com'
       })
         .validate('value1', 'emailMx')
         .validate('value2', 'emailMx')
         .exec()
-        .then(function() {
-          done();
-        });
+        .then(function() { done() });
     });
   });
 
