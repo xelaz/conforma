@@ -391,7 +391,7 @@ describe('Filters check', function () {
         .filter('value8', 'string')
         .filter('value9', 'string')
         .filter('value10', 'string')
-        .filter('value11', {string: true})
+        .filter('value11', { string: true })
         .getData(true);
 
       assert.strictEqual('STRING', filtered.value1, 'value1 is not string');
