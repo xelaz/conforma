@@ -1,6 +1,6 @@
 {
   "name": "conforma",
-  "version": "1.24.5",
+  "version": "1.24.6",
   "description": "Simple form data filter and validator",
   "main": "index.js",
   "scripts": {
@@ -24,15 +24,15 @@
   "author": "xelaz",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "3.5.3",
+    "bluebird": "3.5.5",
     "moment": "2.24.0",
-    "mpath": "0.5.1",
+    "mpath": "0.6.0",
     "node.extend": "2.0.2",
-    "sanitize-html": "1.20.0",
-    "validator": "10.11.0",
+    "sanitize-html": "1.20.1",
+    "validator": "11.1.0",
     "xregexp": "4.2.4"
   },
   "devDependencies": {
-    "mocha": "6.0.2"
+    "mocha": "6.2.0"
   }
 }
